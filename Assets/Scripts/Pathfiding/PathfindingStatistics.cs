@@ -53,7 +53,7 @@ namespace PushingBoxStudios.Pathfinding
 
         internal PathfindingStatistics()
         {
-            this.Reset();
+            Reset();
         }
 
         public void AddIteration()
@@ -95,13 +95,44 @@ namespace PushingBoxStudios.Pathfinding
 
         public override string ToString()
         {
-            return "Time Lapsed..:\t" + this.TimeLapsed + " s" + "\n" +
-                "Iterations...:\t" + this.IterationsCount + "\n" +
-                "Total Nodes..:\t" + this.TotalGridNodes + "\n" +
-                "Opened Nodes.:\t" + this.OpenedNodesCount + "\n" +
-                "Closed Nodes.:\t" + this.ClosedNodesCount + "\n" +
-                "Path Length..:\t" + this.PathLength + "\n" +
-                "Path Cost....:\t" + this.PathCost + "\n";
+            return "Time Lapsed..:\t" + TimeLapsed + " s" + "\n" +
+                "Iterations...:\t" + IterationsCount + "\n" +
+                "Total Nodes..:\t" + TotalGridNodes + "\n" +
+                "Opened Nodes.:\t" + OpenedNodesCount + "\n" +
+                "Closed Nodes.:\t" + ClosedNodesCount + "\n" +
+                "Path Length..:\t" + PathLength + "\n" +
+                "Path Cost....:\t" + PathCost + "\n";
         }
+
+        public PathfindingStatisticsRecord Record()
+        {
+            return new PathfindingStatisticsRecord
+            {
+                TimeLapsed = this.TimeLapsed,
+                TotalGridNodes = this.TotalGridNodes,
+                IterationsCount = this.IterationsCount,
+                OpenedNodesCount = this.OpenedNodesCount,
+                ClosedNodesCount = this.ClosedNodesCount,
+                PathLength = this.PathLength,
+                PathCost = this.PathCost
+            };
+        }
+    }
+
+    public class PathfindingStatisticsRecord
+    {
+        public double TimeLapsed { get; set; }
+
+        public uint TotalGridNodes { get; set; }
+
+        public uint IterationsCount { get; set; }
+
+        public uint OpenedNodesCount { get; set; }
+
+        public uint ClosedNodesCount { get; set; }
+
+        public uint PathLength { get; set; }
+
+        public uint PathCost { get; set; }
     }
 }

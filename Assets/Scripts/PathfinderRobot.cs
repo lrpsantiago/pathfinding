@@ -43,7 +43,8 @@ namespace Assets.Scripts
                 if (_isWandering && !_invoked)
                 {
                     _invoked = true;
-                    Invoke("DoWander", 1);
+                    DoWander();
+                    //Invoke("DoWander", 1);
                 }
 
                 _animator.SetBool("IsWalking", false);
@@ -54,25 +55,39 @@ namespace Assets.Scripts
 
             var pos = transform.position;
             var targetPos = _mapBuilder.GridToSpace(_currentPath.Front);
+            var velocity = _speed * Time.deltaTime;
 
-            if (pos == targetPos || Vector3.Distance(pos, targetPos) <= _speed * Time.deltaTime)
+            //if (pos == targetPos || Vector3.Distance(pos, targetPos) <= float.MaxValue)
+            //{
+            //    _currentPath.PopFront();
+
+            //    if (_currentPath.Size > 0)
+            //    {
+            //        targetPos = _mapBuilder.GridToSpace(_currentPath.Front);
+            //    }
+            //    else
+            //    {
+            //        pos = targetPos;
+            //    }
+            //}
+
+            while (_currentPath.Size > 1)
             {
                 _currentPath.PopFront();
-
-                if (_currentPath.Size > 0)
-                {
-                    targetPos = _mapBuilder.GridToSpace(_currentPath.Front);
-                }
-                else
-                {
-                    pos = targetPos;
-                }
             }
 
-            pos = Vector3.MoveTowards(pos, targetPos, _speed * Time.deltaTime);
+            pos = _mapBuilder.GridToSpace(_currentPath.Front);
+            _currentPath.PopFront();
+
+            //pos = Vector3.MoveTowards(pos, targetPos, velocity);
             transform.position = pos;
 
             UpdateRotation(targetPos);
+        }
+
+        public void OnDestroy()
+        {
+            StatisticsRecorder.Instance.SaveAsCsvFile("PathfindingStatistics");
         }
 
         public void FindPath(Vector3 pos)
@@ -91,6 +106,9 @@ namespace Assets.Scripts
             {
                 return;
             }
+
+            var statistics = _pathfinder.Statistics.Record();
+            StatisticsRecorder.Instance.Add(statistics);
 
             OnPathFound();
             _currentPath.PopFront();
