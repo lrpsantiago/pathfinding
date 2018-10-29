@@ -150,9 +150,9 @@ namespace PushingBoxStudios.Pathfinding
 
     public class Heap<T> : IPriorityQueue<T> where T : class, IComparable
     {
-        List<T> items;
+        private List<T> items;
 
-        public HeapType MinOrMax { get; private set; }
+        public HeapType Type { get; private set; }
 
         public int Count
         {
@@ -164,10 +164,10 @@ namespace PushingBoxStudios.Pathfinding
             get { return items[0]; }
         }
 
-        public Heap(HeapType type)
+        public Heap(HeapType type = HeapType.MinHeap)
         {
             items = new List<T>();
-            this.MinOrMax = type;
+            Type = type;
         }
 
         public void Push(T item)
@@ -177,7 +177,8 @@ namespace PushingBoxStudios.Pathfinding
             int i = items.Count - 1;
 
             bool flag = true;
-            if (MinOrMax == HeapType.MaxHeap)
+
+            if (Type == HeapType.MaxHeap)
                 flag = false;
 
             while (i > 0)
@@ -204,7 +205,8 @@ namespace PushingBoxStudios.Pathfinding
             i = 0;
 
             bool flag = true;
-            if (MinOrMax == HeapType.MaxHeap)
+
+            if (Type == HeapType.MaxHeap)
                 flag = false;
 
             while (true)

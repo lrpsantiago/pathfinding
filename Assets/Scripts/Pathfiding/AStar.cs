@@ -1,40 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace PushingBoxStudios.Pathfinding
 {
     internal class AStar : AbstractPathfinder
     {
-        private uint CalculateDistance(Location from, Location to)
-        {
-            uint dX = (uint)Math.Abs(to.X - from.X);
-            uint dY = (uint)Math.Abs(to.Y - from.Y);
-
-            return (dX + dY);
-        }
-
         public override Path FindPath(Grid grid, Location start, Location goal)
         {
-            this.Statistics.Reset();
-            this.Statistics.TotalGridNodes = grid.Width * grid.Height;
-            this.Statistics.StartTimer();
+            Statistics.Reset();
+            Statistics.TotalGridNodes = grid.Width * grid.Height;
+            Statistics.StartTimer();
 
             if (!ValidateGoal(grid, goal))
             {
-                Path p = new Path();
+                var p = new Path();
                 p.PushBack(start);
                 return p;
             }
 
-            IPriorityQueue<AStarNode> openList = new SortedList<AStarNode>();
+            var openList = new Heap<AStarNode>();
+            var isClosed = new bool[grid.Width, grid.Height];
+            var examined = new AStarNode[grid.Width, grid.Height];
+            var hotspot = new AStarNode(null, start, goal);
 
-            bool[,] isClosed = new bool[grid.Width, grid.Height];
-            AStarNode[,] examined = new AStarNode[grid.Width, grid.Height];
-
-            AStarNode hotspot = new AStarNode(null, start, goal);
             openList.Push(hotspot);
-
             examined[start.X, start.Y] = hotspot;
+
+            var adjacents = new Location[8];
 
             while (hotspot.Position != goal)
             {
@@ -46,72 +37,64 @@ namespace PushingBoxStudios.Pathfinding
                 hotspot = openList.Pop();
 
                 isClosed[hotspot.Position.X, hotspot.Position.Y] = true;
-                this.Statistics.AddClosedNode();
+                Statistics.AddClosedNode();
 
-                Location pos = new Location();
+                SetAdjacentArray(adjacents, hotspot.Position);
 
-                for (pos.Y = hotspot.Position.Y - 1; pos.Y <= hotspot.Position.Y + 1; pos.Y++)
+                for (int i = 0; i < adjacents.Length; i++)
                 {
-                    for (pos.X = hotspot.Position.X - 1; pos.X <= hotspot.Position.X + 1; pos.X++)
+                    var pos = adjacents[i];
+
+                    if (ProbeMode == EProbeMode.FourDirections
+                        && pos.X != hotspot.Position.X
+                        && pos.Y != hotspot.Position.Y)
                     {
-                        if (this.ProbeMode == EProbeMode.FourDirections)
+                        continue;
+                    }
+
+                    if (grid.InBounds(pos)
+                        && hotspot.Position != pos
+                        && grid[(uint)pos.X, (uint)pos.Y]
+                        && !isClosed[(uint)pos.X, (uint)pos.Y])
+                    {
+                        if (!HasCornerBetween(grid, hotspot.Position, pos) &&
+                            !HasDiagonalWall(grid, hotspot.Position, pos))
                         {
-                            if (pos.X != hotspot.Position.X && pos.Y != hotspot.Position.Y)
+                            if (examined[(uint)pos.X, (uint)pos.Y] == null)
                             {
-                                continue;
+                                var node = new AStarNode(hotspot, pos, goal);
+
+                                openList.Push(node);
+                                examined[(uint)pos.X, (uint)pos.Y] = node;
+
+                                Statistics.AddOpenedNode();
                             }
-                        }
-
-                        if (grid.InBounds(pos))
-                        {
-                            if (hotspot.Position != pos)
+                            else
                             {
-                                if (grid[(uint)pos.X, (uint)pos.Y])
+                                var aux = examined[(uint)pos.X, (uint)pos.Y];
+                                var oldParent = aux.Parent;
+                                var c1 = aux.G;
+
+                                aux.Parent = hotspot;
+                                var c2 = aux.G;
+
+                                if (c2 > c1)
                                 {
-                                    if (!isClosed[(uint)pos.X, (uint)pos.Y])
-                                    {
-                                        if (!this.HasCornerBetween(grid, hotspot.Position, pos) &&
-                                            !this.HasDiagonalWall(grid, hotspot.Position, pos))
-                                        {
-                                            if (examined[(uint)pos.X, (uint)pos.Y] == null)
-                                            {
-                                                AStarNode node = new AStarNode(hotspot, pos, goal);
-
-                                                openList.Push(node);
-                                                examined[(uint)pos.X, (uint)pos.Y] = node;
-
-                                                this.Statistics.AddOpenedNode();
-                                            }
-                                            else
-                                            {
-                                                AStarNode aux = examined[(uint)pos.X, (uint)pos.Y];
-                                                AStarNode oldParent = aux.Parent;
-                                                uint c1 = aux.G;
-
-                                                aux.Parent = hotspot;
-                                                uint c2 = aux.G;
-
-                                                if (c2 > c1)
-                                                {
-                                                    aux.Parent = oldParent;
-                                                }
-                                            }
-                                        }
-                                    }
+                                    aux.Parent = oldParent;
                                 }
                             }
                         }
-
-                        this.Statistics.AddIteration();
                     }
+
+                    Statistics.AddIteration();
                 }
             }
 
-            Stack<Location> inverter = new Stack<Location>();
+            var inverter = new Stack<Location>();
 
             if (hotspot != null)
             {
-                this.Statistics.PathCost = hotspot.G;
+                Statistics.PathCost = hotspot.G;
             }
 
             while (hotspot != null)
@@ -120,7 +103,7 @@ namespace PushingBoxStudios.Pathfinding
                 hotspot = hotspot.Parent;
             }
 
-            Path path = new Path();
+            var path = new Path();
 
             while (inverter.Count > 0)
             {
@@ -129,8 +112,8 @@ namespace PushingBoxStudios.Pathfinding
 
             path.PushBack(goal);
 
-            this.Statistics.StopTimer();
-            this.Statistics.PathLength = path.Size;
+            Statistics.StopTimer();
+            Statistics.PathLength = path.Size;
 
             return path;
         }
@@ -156,22 +139,31 @@ namespace PushingBoxStudios.Pathfinding
             return false;
         }
 
-        private bool IsNotInList(SortedList<AStarNode> list, Location position)
+        private void SetAdjacentArray(Location[] adjacents, Location hotspot)
         {
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (list[i].Position == position)
-                {
-                    return false;
-                }
-            }
+            adjacents[0].X = hotspot.X - 1;
+            adjacents[0].Y = hotspot.Y - 1;
 
-            return true;
-        }
+            adjacents[1].X = hotspot.X + 1;
+            adjacents[1].Y = hotspot.Y - 1;
 
-        private bool IsNotInList(Dictionary<Location, AStarNode> list, Location position)
-        {
-            return !list.ContainsKey(position);
+            adjacents[2].X = hotspot.X - 1;
+            adjacents[2].Y = hotspot.Y + 1;
+
+            adjacents[3].X = hotspot.X + 1;
+            adjacents[3].Y = hotspot.Y + 1;
+
+            adjacents[4].X = hotspot.X;
+            adjacents[4].Y = hotspot.Y - 1;
+
+            adjacents[5].X = hotspot.X;
+            adjacents[5].Y = hotspot.Y + 1;
+
+            adjacents[6].X = hotspot.X - 1;
+            adjacents[6].Y = hotspot.Y;
+
+            adjacents[7].X = hotspot.X + 1;
+            adjacents[7].Y = hotspot.Y;
         }
     }
 }
