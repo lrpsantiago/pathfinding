@@ -3,88 +3,72 @@ using System.Collections.Generic;
 
 namespace Assets.Scripts.Pathfiding.PriorityQueue
 {
-    /// <summary>
-    /// Represents a Fibonacci heap data structure capable of storing generic key-value pairs.
-    /// </summary>
     public class FibonacciHeap<TKey, TValue> : IPriorityQueue<TKey, TValue>
         where TKey : IComparable
     {
         private Node _minNode;
 
-        /// <summary>
-        /// The size of the heap.
-        /// </summary>
         public int Count { get; private set; }
 
-        /// <summary>
-        /// Creates a Fibonacci heap.
-        /// </summary>
+        public bool IsEmpty
+        {
+            get { return _minNode == null; }
+        }
+
         public FibonacciHeap()
         {
             _minNode = null;
             Count = 0;
         }
 
-        /// <summary>
-        /// Clears the heap's data, making it an empty heap.
-        /// </summary>
         public void Clear()
         {
             _minNode = null;
             Count = 0;
         }
 
-
-        /// <summary>
-        /// Inserts a new key-value pair into the heap.
-        /// </summary>
-        /// <param name="key">The key to insert.</param>
-        /// <param name="val">The value to insert.</param>
-        /// <returns>The inserted node.</returns>
         public INode<TKey, TValue> Push(TKey key, TValue val)
         {
-            Node node = new Node(key, val);
+            var node = new Node(key, val);
+
             _minNode = MergeLists(_minNode, node);
             Count++;
+
             return node;
         }
 
-        /// <summary>
-        /// Returns the minimum node from the heap.
-        /// </summary>
-        /// <returns>The heap's minimum node or undefined if the heap is empty.</returns>
         public INode<TKey, TValue> FindMinimum()
         {
             return _minNode;
         }
 
-        /// <summary>
-        /// Decreases a key of a node.
-        /// </summary>
-        /// </param name="node">The node to decrease the key of.</param>
-        /// </param name="newKey">The new key to assign to the node.</param>
         public void DecreaseKey(INode<TKey, TValue> node, TKey newKey)
         {
             var casted = node as Node;
+
             if (casted == null)
+            {
                 throw new ArgumentException("node must be a FibonacciHeap.Node");
+            }
+
             DecreaseKey(casted, newKey);
         }
 
-        /// <summary>
-        /// Decreases a key of a node.
-        /// </summary>
-        /// </param name="node">The node to decrease the key of.</param>
-        /// </param name="newKey">The new key to assign to the node.</param>
         public void DecreaseKey(Node node, TKey newKey)
         {
             if (node == null)
+            {
                 throw new ArgumentException("node must be non-null.");
+            }
+
             if (newKey.CompareTo(node.Key) > 0)
+            {
                 throw new ArgumentOutOfRangeException("New key is larger than old key.");
+            }
 
             node.Key = newKey;
-            Node parent = node.Parent;
+            var parent = node.Parent;
+
             if (parent != null && node.CompareTo(parent) < 0)
             {
                 Cut(node, parent);
@@ -96,67 +80,24 @@ namespace Assets.Scripts.Pathfiding.PriorityQueue
             }
         }
 
-        /// <summary>
-        /// Cut the link between a node and its parent, moving the node to the root list.
-        /// </summary>
-        /// <param name="node">The node being cut.</param>
-        /// <param name="parent">The parent of the node being cut.</param>
-        private void Cut(Node node, Node parent)
-        {
-            parent.Degree--;
-            parent.Child = (node.Next == node ? null : node.Next);
-            RemoveNodeFromList(node);
-            MergeLists(_minNode, node);
-            node.IsMarked = false;
-        }
-
-        /// <summary>
-        /// Perform a cascading cut on a node; mark the node if it is not marked, otherwise cut the
-        /// node and perform a cascading cut on its parent.
-        /// </summary>
-        /// <param name="node">The node being considered to be cut.</param>
-        private void CascadingCut(Node node)
-        {
-            Node parent = node.Parent;
-
-            if (parent != null)
-            {
-                if (node.IsMarked)
-                {
-                    Cut(node, parent);
-                    CascadingCut(parent);
-                }
-                else
-                {
-                    node.IsMarked = true;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Deletes a node.
-        /// </summary>
-        /// <param name="node">The node to delete.</param>
         public void Delete(INode<TKey, TValue> node)
         {
             var casted = node as Node;
 
             if (casted == null)
+            {
                 throw new ArgumentException("node must be a FibonacciHeap.Node");
+            }
 
             Delete(casted);
         }
 
-        /// <summary>
-        /// Deletes a node.
-        /// </summary>
-        /// <param name="node">The node to delete.</param>
         public void Delete(Node node)
         {
             // This is a special implementation of decreaseKey that sets the
             // argument to the minimum value. This is necessary to make generic keys
             // work, since there is no MIN_VALUE constant for generic types.
-            Node parent = node.Parent;
+            var parent = node.Parent;
 
             if (parent != null)
             {
@@ -169,28 +110,26 @@ namespace Assets.Scripts.Pathfiding.PriorityQueue
             Pop();
         }
 
-        /// <summary>
-        /// Extracts and returns the minimum node from the heap.
-        /// </summary>
-        /// <returns>The heap's minimum node or undefined if the heap is empty.</returns>
         public INode<TKey, TValue> Pop()
         {
-            Node extractedMin = _minNode;
+            var extractedMin = _minNode;
 
             if (extractedMin != null)
             {
                 // Set parent to null for the minimum's children
                 if (extractedMin.Child != null)
                 {
-                    Node child = extractedMin.Child;
+                    var child = extractedMin.Child;
+
                     do
                     {
                         child.Parent = null;
                         child = child.Next;
-                    } while (child != extractedMin.Child);
+                    }
+                    while (child != extractedMin.Child);
                 }
 
-                Node nextInRootList = extractedMin.Next == extractedMin ? null : extractedMin.Next;
+                var nextInRootList = extractedMin.Next == extractedMin ? null : extractedMin.Next;
 
                 // Remove min from root list
                 RemoveNodeFromList(extractedMin);
@@ -208,17 +147,59 @@ namespace Assets.Scripts.Pathfiding.PriorityQueue
             return extractedMin;
         }
 
+        public void Union(IPriorityQueue<TKey, TValue> other)
+        {
+            var casted = other as FibonacciHeap<TKey, TValue>;
 
-        /// <summary>
-        /// Merge all trees of the same order together until there are no two trees of the same
-        /// order.
-        /// </summary>
+            if (casted == null)
+            {
+                throw new ArgumentException("other must be a FibonacciHeap");
+            }
+
+            Union(casted);
+        }
+
+        public void Union(FibonacciHeap<TKey, TValue> other)
+        {
+            _minNode = MergeLists(_minNode, other._minNode);
+            Count += other.Count;
+        }
+
+        private void Cut(Node node, Node parent)
+        {
+            parent.Degree--;
+            parent.Child = (node.Next == node ? null : node.Next);
+            RemoveNodeFromList(node);
+            MergeLists(_minNode, node);
+            node.IsMarked = false;
+        }
+
+        private void CascadingCut(Node node)
+        {
+            var parent = node.Parent;
+
+            if (parent != null)
+            {
+                if (node.IsMarked)
+                {
+                    Cut(node, parent);
+                    CascadingCut(parent);
+                }
+                else
+                {
+                    node.IsMarked = true;
+                }
+            }
+        }
+
         private void Consolidate()
         {
             if (_minNode == null)
+            {
                 return;
+            }
 
-            IList<Node> aux = new List<Node>();
+            var aux = new List<Node>();
             var items = GetRootTrees();
 
             foreach (var current in items)
@@ -237,9 +218,11 @@ namespace Assets.Scripts.Pathfiding.PriorityQueue
                     if (top.Key.CompareTo(aux[top.Degree].Key) > 0)
                     {
                         Node temp = top;
+
                         top = aux[top.Degree];
                         aux[top.Degree] = temp;
                     }
+
                     LinkHeaps(aux[top.Degree], top);
                     aux[top.Degree] = null;
                     top.Degree++;
@@ -249,10 +232,12 @@ namespace Assets.Scripts.Pathfiding.PriorityQueue
                 {
                     aux.Add(null);
                 }
+
                 aux[top.Degree] = top;
             }
 
             _minNode = null;
+
             for (int i = 0; i < aux.Count; i++)
             {
                 if (aux[i] != null)
@@ -265,29 +250,25 @@ namespace Assets.Scripts.Pathfiding.PriorityQueue
             }
         }
 
-        /// <summary>
-        /// Gets all root-level trees of the heap. 
-        /// </summary>
         private IEnumerable<Node> GetRootTrees()
         {
             var items = new Queue<Node>();
-            Node current = _minNode;
+            var current = _minNode;
+
             do
             {
                 items.Enqueue(current);
                 current = current.Next;
-            } while (_minNode != current);
+            }
+            while (_minNode != current);
+
             return items;
         }
 
-        /// <summary>
-        /// Removes a node from a node list.
-        /// </summary>
-        /// <param name="node">The node to remove.</param>
         private void RemoveNodeFromList(Node node)
         {
-            Node prev = node.Prev;
-            Node next = node.Next;
+            var prev = node.Prev;
+            var next = node.Next;
             prev.Next = next;
             next.Prev = prev;
 
@@ -295,11 +276,6 @@ namespace Assets.Scripts.Pathfiding.PriorityQueue
             node.Prev = node;
         }
 
-        /// <summary>
-        /// Links two heaps of the same order together.
-        /// </summary>
-        /// <param name="max">The heap with the larger root.</param>
-        /// <param name="min">The heap with the smaller root.</param>
         private void LinkHeaps(Node max, Node min)
         {
             RemoveNodeFromList(max);
@@ -308,45 +284,24 @@ namespace Assets.Scripts.Pathfiding.PriorityQueue
             max.IsMarked = false;
         }
 
-        /// <summary>
-        /// Joins another heap to this heap.
-        /// </summary>
-        /// <param name="other">The other heap.</param>
-        public void Union(IPriorityQueue<TKey, TValue> other)
-        {
-            var casted = other as FibonacciHeap<TKey, TValue>;
-            if (casted == null)
-                throw new ArgumentException("other must be a FibonacciHeap");
-            Union(casted);
-        }
-
-        /// <summary>
-        /// Joins another heap to this heap.
-        /// </summary>
-        /// <param name="other">The other heap.</param>
-        public void Union(FibonacciHeap<TKey, TValue> other)
-        {
-            _minNode = MergeLists(_minNode, other._minNode);
-            Count += other.Count;
-        }
-
-
-        /// <summary>
-        /// Merge two lists of nodes together.
-        /// </summary>
-        /// <param name="a">The first list to merge.</param>
-        /// <param name="b">The second list to merge.</param>
-        /// <returns>The new minimum node from the two lists.</returns>
         private Node MergeLists(Node a, Node b)
         {
             if (a == null && b == null)
+            {
                 return null;
-            if (a == null)
-                return b;
-            if (b == null)
-                return a;
+            }
 
-            Node temp = a.Next;
+            if (a == null)
+            {
+                return b;
+            }
+
+            if (b == null)
+            {
+                return a;
+            }
+
+            var temp = a.Next;
             a.Next = b.Next;
             a.Next.Prev = a;
             b.Next = temp;
@@ -355,17 +310,6 @@ namespace Assets.Scripts.Pathfiding.PriorityQueue
             return a.CompareTo(b) < 0 ? a : b;
         }
 
-        /// <summary>
-        /// Gets whether the heap is empty.
-        /// </summary>
-        public bool IsEmpty
-        {
-            get { return _minNode == null; }
-        }
-
-        /// <summary>
-        /// A node object used to store data in the Fibonacci heap.
-        /// </summary>
         public class Node : INode<TKey, TValue>
         {
             public TKey Key { get; set; }
@@ -377,18 +321,10 @@ namespace Assets.Scripts.Pathfiding.PriorityQueue
             public Node Next { get; set; }
             public bool IsMarked { get; set; }
 
-            /// <summary>
-            /// Creates a Fibonacci heap node.
-            /// </summary>
             public Node()
             {
             }
 
-            /// <summary>
-            /// Creates a Fibonacci heap node initialised with a key and value.
-            /// </summary>
-            /// <param name="key">The key to use.</param>
-            /// <param name="val">The value to use.</param>
             public Node(TKey key, TValue val)
             {
                 Key = key;
@@ -400,9 +336,13 @@ namespace Assets.Scripts.Pathfiding.PriorityQueue
             public int CompareTo(object other)
             {
                 var casted = other as Node;
+
                 if (casted == null)
+                {
                     throw new NotImplementedException("Cannot compare to a non-Node object");
-                return this.Key.CompareTo(casted.Key);
+                }
+
+                return Key.CompareTo(casted.Key);
             }
         }
     }

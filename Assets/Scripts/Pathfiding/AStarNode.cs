@@ -2,7 +2,7 @@
 
 namespace PushingBoxStudios.Pathfinding
 {
-    internal class AStarNode : IComparable, IComparable<AStarNode>
+    public class AStarNode : IComparable, IComparable<AStarNode>
     {
         private static readonly uint STRAIGHTCOST = 100;
         private static readonly uint DIAGONALCOST = 141;

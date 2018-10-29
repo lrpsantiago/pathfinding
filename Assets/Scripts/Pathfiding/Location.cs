@@ -9,8 +9,8 @@ namespace PushingBoxStudios.Pathfinding
 
         public Location(int x, int y)
         {
-            this.X = x;
-            this.Y = y;
+            X = x;
+            Y = y;
         }
 
         public static bool operator ==(Location left, Location right)
@@ -38,7 +38,7 @@ namespace PushingBoxStudios.Pathfinding
 
         public override int GetHashCode()
         {
-            return this.ShiftAndWrap(this.X.GetHashCode(), 2) ^ this.Y.GetHashCode();
+            return ShiftAndWrap(X.GetHashCode(), 2) ^ Y.GetHashCode();
         }
 
         private int ShiftAndWrap(int value, int positions)

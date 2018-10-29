@@ -1,9 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Scripts.Pathfiding.PriorityQueue;
+using System;
+using System.Collections.Generic;
 
 namespace PushingBoxStudios.Pathfinding
 {
     internal class AStar : AbstractPathfinder
     {
+        private static readonly uint STRAIGHTCOST = 100;
+        private static readonly uint DIAGONALCOST = 141;
+
         public override Path FindPath(Grid grid, Location start, Location goal)
         {
             Statistics.Reset();
@@ -14,73 +19,78 @@ namespace PushingBoxStudios.Pathfinding
             {
                 var p = new Path();
                 p.PushBack(start);
+
                 return p;
             }
 
-            var openList = new Heap<AStarNode>();
+            var openList = new FibonacciHeap<uint, Location>();
             var isClosed = new bool[grid.Width, grid.Height];
-            var examined = new AStarNode[grid.Width, grid.Height];
-            var hotspot = new AStarNode(null, start, goal);
+            var soFarCost = new uint[grid.Width, grid.Height];
+            var parents = new Location?[grid.Width, grid.Height];
+            var examined = new INode<uint, Location>[grid.Width, grid.Height];
+            var hotspot = start;
 
-            openList.Push(hotspot);
-            examined[start.X, start.Y] = hotspot;
+            openList.Push(0, hotspot);
+            examined[start.X, start.Y] = openList.FindMinimum();
 
             var adjacents = new Location[8];
 
-            while (hotspot.Position != goal)
+            while (hotspot != goal)
             {
                 if (openList.Count <= 0)
                 {
                     return null;
                 }
 
-                hotspot = openList.Pop();
-
-                isClosed[hotspot.Position.X, hotspot.Position.Y] = true;
+                hotspot = openList.Pop().Value;
+                isClosed[hotspot.X, hotspot.Y] = true;
                 Statistics.AddClosedNode();
 
-                SetAdjacentArray(adjacents, hotspot.Position);
+                SetAdjacentArray(adjacents, hotspot);
 
                 for (int i = 0; i < adjacents.Length; i++)
                 {
                     var pos = adjacents[i];
 
                     if (ProbeMode == EProbeMode.FourDirections
-                        && pos.X != hotspot.Position.X
-                        && pos.Y != hotspot.Position.Y)
+                        && pos.X != hotspot.X
+                        && pos.Y != hotspot.Y)
                     {
                         continue;
                     }
 
                     if (grid.InBounds(pos)
-                        && hotspot.Position != pos
-                        && grid[(uint)pos.X, (uint)pos.Y]
-                        && !isClosed[(uint)pos.X, (uint)pos.Y])
+                        && hotspot != pos
+                        && grid[pos]
+                        && !isClosed[pos.X, pos.Y])
                     {
-                        if (!HasCornerBetween(grid, hotspot.Position, pos) &&
-                            !HasDiagonalWall(grid, hotspot.Position, pos))
+                        if (!HasCornerBetween(grid, hotspot, pos) &&
+                            !HasDiagonalWall(grid, hotspot, pos))
                         {
-                            if (examined[(uint)pos.X, (uint)pos.Y] == null)
+                            if (examined[pos.X, pos.Y] == null)
                             {
-                                var node = new AStarNode(hotspot, pos, goal);
+                                parents[pos.X, pos.Y] = hotspot;
 
-                                openList.Push(node);
-                                examined[(uint)pos.X, (uint)pos.Y] = node;
+                                var scoreH = CalculateHeuristicCost(pos, goal);
+                                var scoreG = soFarCost[hotspot.X, hotspot.Y] + CalculateDistance(pos, hotspot);
+                                var score = scoreH + scoreG;
+
+                                examined[pos.X, pos.Y] = openList.Push(score, pos);
 
                                 Statistics.AddOpenedNode();
                             }
                             else
                             {
-                                var aux = examined[(uint)pos.X, (uint)pos.Y];
-                                var oldParent = aux.Parent;
-                                var c1 = aux.G;
+                                var currentParent = parents[pos.X, pos.Y].GetValueOrDefault();
+                                var currentCost = CalculateDistance(pos, currentParent);
+                                var newCost = CalculateDistance(pos, hotspot);
 
-                                aux.Parent = hotspot;
-                                var c2 = aux.G;
-
-                                if (c2 > c1)
+                                if (newCost < currentCost)
                                 {
-                                    aux.Parent = oldParent;
+                                    parents[pos.X, pos.Y] = hotspot;
+                                    soFarCost[pos.X, pos.Y] = soFarCost[hotspot.X, hotspot.Y] + newCost;
+
+                                    openList.DecreaseKey(examined[pos.X, pos.Y], soFarCost[pos.X, pos.Y]);
                                 }
                             }
                         }
@@ -94,13 +104,15 @@ namespace PushingBoxStudios.Pathfinding
 
             if (hotspot != null)
             {
-                Statistics.PathCost = hotspot.G;
+                Statistics.PathCost = soFarCost[hotspot.X, hotspot.Y];
             }
 
-            while (hotspot != null)
+            Location? aux = hotspot;
+
+            while (aux != null)
             {
-                inverter.Push(hotspot.Position);
-                hotspot = hotspot.Parent;
+                inverter.Push(hotspot);
+                aux = parents[hotspot.X, hotspot.Y];
             }
 
             var path = new Path();
@@ -117,6 +129,7 @@ namespace PushingBoxStudios.Pathfinding
 
             return path;
         }
+
 
         private bool HasCornerBetween(Grid grid, Location from, Location to)
         {
@@ -164,6 +177,24 @@ namespace PushingBoxStudios.Pathfinding
 
             adjacents[7].X = hotspot.X + 1;
             adjacents[7].Y = hotspot.Y;
+        }
+
+        private uint CalculateHeuristicCost(Location from, Location goal)
+        {
+            uint dX = (uint)Math.Abs(goal.X - from.X);
+            uint dY = (uint)Math.Abs(goal.Y - from.Y);
+
+            return STRAIGHTCOST * (dX + dY) + (DIAGONALCOST - 2 * STRAIGHTCOST) * Math.Min(dX, dY);
+        }
+
+        private uint CalculateDistance(Location pos, Location parent)
+        {
+            if (parent.X != pos.X && parent.Y != pos.Y)
+            {
+                return DIAGONALCOST;
+            }
+
+            return STRAIGHTCOST;
         }
     }
 }
