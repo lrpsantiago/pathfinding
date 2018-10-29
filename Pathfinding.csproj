@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{1EEB8667-E8C3-1A9E-EA77-3C6CA1D84064}</ProjectGuid>
+    <ProjectGuid>{62C78A96-E3B5-81EC-9D94-831AAFF319AE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>Assembly-CSharp</AssemblyName>
     <FileAlignment>512</FileAlignment>
@@ -13,11 +13,14 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
+    <UnityProjectGenerator>VSTU</UnityProjectGenerator>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.6.6f2</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -82,6 +85,9 @@
     <Compile Include="Assets\Scripts\LocationSelector.cs" />
     <Compile Include="Assets\Scripts\MapBuilder.cs" />
     <Compile Include="Assets\Scripts\MapReader.cs" />
+    <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\FibonacciHeap.cs" />
+    <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\INode.cs" />
+    <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\IPriorityQueue.cs" />
     <Compile Include="Assets\Scripts\PathPlotter.cs" />
     <Compile Include="Assets\Scripts\Pathfiding\AStar.cs" />
     <Compile Include="Assets\Scripts\Pathfiding\AStarBinaryHeap.cs" />
@@ -100,6 +106,7 @@
     <Compile Include="Assets\Scripts\Pathfiding\SortedList.cs" />
     <Compile Include="Assets\Scripts\PathfinderRobot.cs" />
     <Compile Include="Assets\Scripts\RtsCameraHandler.cs" />
+    <Compile Include="Assets\Scripts\StatisticsRecorder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Raw Mocap Data\Animations\_CompleteAnimationList.txt" />
