@@ -26,7 +26,7 @@ namespace PushingBoxStudios.Pathfinding
                 return p;
             }
 
-            IPriorityQueue<AStarNode> openList = new SortedList<AStarNode>();
+            IPriorityQueue<AStarNode> openList = new Heap<AStarNode>(HeapType.MinHeap); //new SortedList<AStarNode>();
 
             bool[,] isClosed = new bool[grid.Width, grid.Height];
             AStarNode[,] examined = new AStarNode[grid.Width, grid.Height];
