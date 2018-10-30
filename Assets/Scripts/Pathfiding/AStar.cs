@@ -76,21 +76,29 @@ namespace PushingBoxStudios.Pathfinding
                                 var score = scoreH + scoreG;
 
                                 examined[pos.X, pos.Y] = openList.Push(score, pos);
+                                soFarCost[pos.X, pos.Y] = scoreG;
 
                                 Statistics.AddOpenedNode();
                             }
                             else
                             {
-                                var currentParent = parents[pos.X, pos.Y].GetValueOrDefault();
-                                var currentCost = CalculateDistance(pos, currentParent);
-                                var newCost = CalculateDistance(pos, hotspot);
+                                if (!parents[pos.X, pos.Y].HasValue)
+                                {
+                                    continue;
+                                }
+
+                                var currentParent = parents[pos.X, pos.Y].Value;
+                                var currentCost = soFarCost[currentParent.X, currentParent.Y]
+                                    + CalculateDistance(pos, currentParent);
+
+                                var newCost = soFarCost[hotspot.X, hotspot.Y] + CalculateDistance(pos, hotspot);
 
                                 if (newCost < currentCost)
                                 {
                                     parents[pos.X, pos.Y] = hotspot;
-                                    soFarCost[pos.X, pos.Y] = soFarCost[hotspot.X, hotspot.Y] + newCost;
+                                    soFarCost[pos.X, pos.Y] = newCost;
 
-                                    openList.DecreaseKey(examined[pos.X, pos.Y], soFarCost[pos.X, pos.Y]);
+                                    openList.DecreaseKey(examined[pos.X, pos.Y], newCost);
                                 }
                             }
                         }
@@ -109,10 +117,10 @@ namespace PushingBoxStudios.Pathfinding
 
             Location? aux = hotspot;
 
-            while (aux != null)
+            while (aux.HasValue)
             {
-                inverter.Push(hotspot);
-                aux = parents[hotspot.X, hotspot.Y];
+                inverter.Push(aux.Value);
+                aux = parents[aux.Value.X, aux.Value.Y];
             }
 
             var path = new Path();
