@@ -32,6 +32,7 @@ namespace PushingBoxStudios.Pathfinding
 
             openList.Push(0, hotspot);
             examined[start.X, start.Y] = openList.FindMinimum();
+            parents[start.X, start.Y] = null;
 
             var adjacents = new Location[8];
 
@@ -109,10 +110,10 @@ namespace PushingBoxStudios.Pathfinding
 
             Location? aux = hotspot;
 
-            while (aux != null)
+            while (aux.HasValue)
             {
-                inverter.Push(hotspot);
-                aux = parents[hotspot.X, hotspot.Y];
+                inverter.Push(aux.Value);
+                aux = parents[aux.Value.X, aux.Value.Y];
             }
 
             var path = new Path();
