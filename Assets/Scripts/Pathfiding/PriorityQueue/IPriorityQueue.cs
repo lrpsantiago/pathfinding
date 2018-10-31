@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace Assets.Scripts.Pathfiding.PriorityQueue
+namespace PushingBoxStudios.Pathfinding.PriorityQueues
 {
-    public interface IPriorityQueue<TKey, TValue> where TKey : IComparable
+    public interface IPriorityQueue<TKey, TValue> where TKey : IComparable, IComparable<TKey>
     {
         int Count { get; }
-        bool IsEmpty { get; }
 
         void Clear();
         void DecreaseKey(INode<TKey, TValue> node, TKey newKey);

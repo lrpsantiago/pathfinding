@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.Pathfiding.PriorityQueue;
+﻿using PushingBoxStudios.Pathfinding.PriorityQueues;
 using System;
 using System.Collections.Generic;
 
@@ -27,12 +27,11 @@ namespace PushingBoxStudios.Pathfinding
             var isClosed = new bool[grid.Width, grid.Height];
             var soFarCost = new uint[grid.Width, grid.Height];
             var parents = new Location?[grid.Width, grid.Height];
-            var examined = new INode<uint, Location>[grid.Width, grid.Height];
+            var queueNode = new INode<uint, Location>[grid.Width, grid.Height];
             var hotspot = start;
 
             openList.Push(0, hotspot);
-            examined[start.X, start.Y] = openList.FindMinimum();
-            parents[start.X, start.Y] = null;
+            queueNode[start.X, start.Y] = openList.FindMinimum();
 
             var adjacents = new Location[8];
 
@@ -65,10 +64,10 @@ namespace PushingBoxStudios.Pathfinding
                         && grid[pos]
                         && !isClosed[pos.X, pos.Y])
                     {
-                        if (!HasCornerBetween(grid, hotspot, pos) &&
-                            !HasDiagonalWall(grid, hotspot, pos))
+                        if (!HasCornerBetween(grid, hotspot, pos)
+                            && !HasDiagonalWall(grid, hotspot, pos))
                         {
-                            if (examined[pos.X, pos.Y] == null)
+                            if (queueNode[pos.X, pos.Y] == null)
                             {
                                 parents[pos.X, pos.Y] = hotspot;
 
@@ -76,7 +75,7 @@ namespace PushingBoxStudios.Pathfinding
                                 var scoreG = soFarCost[hotspot.X, hotspot.Y] + CalculateDistance(pos, hotspot);
                                 var score = scoreH + scoreG;
 
-                                examined[pos.X, pos.Y] = openList.Push(score, pos);
+                                queueNode[pos.X, pos.Y] = openList.Push(score, pos);
                                 soFarCost[pos.X, pos.Y] = scoreG;
 
                                 Statistics.AddOpenedNode();
@@ -99,7 +98,7 @@ namespace PushingBoxStudios.Pathfinding
                                     parents[pos.X, pos.Y] = hotspot;
                                     soFarCost[pos.X, pos.Y] = newCost;
 
-                                    openList.DecreaseKey(examined[pos.X, pos.Y], newCost);
+                                    openList.DecreaseKey(queueNode[pos.X, pos.Y], newCost);
                                 }
                             }
                         }

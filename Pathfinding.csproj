@@ -86,6 +86,7 @@
     <Compile Include="Assets\Scripts\MapBuilder.cs" />
     <Compile Include="Assets\Scripts\MapReader.cs" />
     <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\FibonacciHeap.cs" />
+    <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\FibonacciHeapNode.cs" />
     <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\INode.cs" />
     <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\IPriorityQueue.cs" />
     <Compile Include="Assets\Scripts\PathPlotter.cs" />

@@ -1,6 +1,7 @@
 ﻿using PushingBoxStudios.Pathfinding;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -60,7 +61,7 @@ namespace Assets.Scripts
         private string CreateCsvLine(int index, PathfindingStatisticsRecord statstics)
         {
             return index + ";" +
-                statstics.TimeLapsed + ";" +
+                statstics.TimeLapsed.ToString(CultureInfo.GetCultureInfo("pt-br")) + ";" +
                 statstics.IterationsCount + ";" +
                 statstics.TotalGridNodes + ";" +
                 statstics.OpenedNodesCount + ";" +
