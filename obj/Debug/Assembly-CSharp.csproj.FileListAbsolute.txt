@@ -26,7 +26,8 @@ C:\Users\gizmin\Documents\pathfinding\Temp\bin\Debug\nunit.framework.xml
 C:\Users\gizmin\Documents\pathfinding\Temp\bin\Debug\UnityEngine.Analytics.xml
 C:\Users\gizmin\Documents\pathfinding\Temp\bin\Debug\UnityEngine.HoloLens.xml
 C:\Users\gizmin\Documents\pathfinding\Temp\bin\Debug\UnityEngine.VR.xml
-C:\Users\gizmin\Documents\pathfinding\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
 C:\Users\gizmin\Documents\pathfinding\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
 C:\Users\gizmin\Documents\pathfinding\obj\Debug\Assembly-CSharp.dll
 C:\Users\gizmin\Documents\pathfinding\obj\Debug\Assembly-CSharp.pdb
+C:\Users\gizmin\Documents\pathfinding\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache
+C:\Users\gizmin\Documents\pathfinding\obj\Debug\Assembly-CSharp.csproj.CopyComplete

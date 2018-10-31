@@ -15,27 +15,27 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
             Count = 0;
         }
 
-        public void DecreaseKey(INode<TKey, TValue> node, TKey newKey)
+        public void DecreaseKey(IPair<TKey, TValue> node, TKey newKey)
         {
             throw new System.NotImplementedException();
         }
 
-        public void Delete(INode<TKey, TValue> node)
+        public void Delete(IPair<TKey, TValue> node)
         {
             throw new System.NotImplementedException();
         }
 
-        public INode<TKey, TValue> FindMinimum()
+        public IPair<TKey, TValue> FindMinimum()
         {
             return _minNode;
         }
 
-        public INode<TKey, TValue> Pop()
+        public IPair<TKey, TValue> Pop()
         {
             throw new System.NotImplementedException();
         }
 
-        public INode<TKey, TValue> Push(TKey key, TValue val)
+        public IPair<TKey, TValue> Push(TKey key, TValue val)
         {
             throw new System.NotImplementedException();
         }

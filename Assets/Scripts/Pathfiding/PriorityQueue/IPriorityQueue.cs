@@ -6,12 +6,8 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
     {
         int Count { get; }
 
-        void Clear();
-        void DecreaseKey(INode<TKey, TValue> node, TKey newKey);
-        void Delete(INode<TKey, TValue> node);
-        INode<TKey, TValue> Pop();
-        INode<TKey, TValue> FindMinimum();
-        INode<TKey, TValue> Push(TKey key, TValue val);
-        void Union(IPriorityQueue<TKey, TValue> other);
+        IPair<TKey, TValue> Push(TKey key, TValue val);
+        IPair<TKey, TValue> Pop();
+        void DecreaseKey(IPair<TKey, TValue> node, TKey newKey);
     }
 }

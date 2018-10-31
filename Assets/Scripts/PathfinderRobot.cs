@@ -78,7 +78,7 @@ namespace Assets.Scripts
 
             pos = _mapBuilder.GridToSpace(_currentPath.Front);
             _currentPath.PopFront();
-
+            
             //pos = Vector3.MoveTowards(pos, targetPos, velocity);
             transform.position = pos;
 

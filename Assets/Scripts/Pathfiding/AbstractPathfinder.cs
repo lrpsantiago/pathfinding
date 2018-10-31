@@ -25,5 +25,37 @@ namespace PushingBoxStudios.Pathfinding
         //}
 
         //public abstract Path FindPath(Grid grid, uint startX, uint startY, uint goalX, uint goalY);
+
+        protected virtual void OnStarted()
+        {
+            if (Started != null)
+            {
+                Started(this, EventArgs.Empty);
+            }
+        }
+
+        protected virtual void OnIteration()
+        {
+            if (Iteration != null)
+            {
+                Iteration(this, EventArgs.Empty);
+            }
+        }
+
+        protected virtual void OnPathFound()
+        {
+            if (PathFound != null)
+            {
+                PathFound(this, EventArgs.Empty);
+            }
+        }
+
+        protected virtual void OnPathNotFound()
+        {
+            if (PathNotFound != null)
+            {
+                PathNotFound(this, EventArgs.Empty);
+            }
+        }
     }
 }

@@ -11,6 +11,8 @@ namespace PushingBoxStudios.Pathfinding
 
         public override Path FindPath(Grid grid, Location start, Location goal)
         {
+            OnStarted();
+
             Statistics.Reset();
             Statistics.TotalGridNodes = grid.Width * grid.Height;
             Statistics.StartTimer();
@@ -19,19 +21,19 @@ namespace PushingBoxStudios.Pathfinding
             {
                 var p = new Path();
                 p.PushBack(start);
+                OnPathNotFound();
 
                 return p;
             }
-
-            var openList = new FibonacciHeap<uint, Location>();
+            
+            var openList = new Heap<uint, Location>();
             var isClosed = new bool[grid.Width, grid.Height];
             var soFarCost = new uint[grid.Width, grid.Height];
             var parents = new Location?[grid.Width, grid.Height];
-            var queueNode = new INode<uint, Location>[grid.Width, grid.Height];
+            var queueNode = new IPair<uint, Location>[grid.Width, grid.Height];
             var hotspot = start;
 
-            openList.Push(0, hotspot);
-            queueNode[start.X, start.Y] = openList.FindMinimum();
+            queueNode[start.X, start.Y] = openList.Push(0, hotspot);
 
             var adjacents = new Location[8];
 
@@ -39,6 +41,7 @@ namespace PushingBoxStudios.Pathfinding
             {
                 if (openList.Count <= 0)
                 {
+                    OnPathNotFound();
                     return null;
                 }
 
@@ -104,17 +107,14 @@ namespace PushingBoxStudios.Pathfinding
                         }
                     }
 
+                    OnIteration();
                     Statistics.AddIteration();
                 }
             }
 
+            Statistics.PathCost = soFarCost[hotspot.X, hotspot.Y];
+
             var inverter = new Stack<Location>();
-
-            if (hotspot != null)
-            {
-                Statistics.PathCost = soFarCost[hotspot.X, hotspot.Y];
-            }
-
             Location? aux = hotspot;
 
             while (aux.HasValue)
@@ -132,6 +132,7 @@ namespace PushingBoxStudios.Pathfinding
 
             path.PushBack(goal);
 
+            OnPathFound();
             Statistics.StopTimer();
             Statistics.PathLength = path.Size;
 

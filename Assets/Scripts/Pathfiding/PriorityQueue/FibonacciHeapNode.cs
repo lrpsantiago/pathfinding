@@ -2,8 +2,7 @@
 
 namespace PushingBoxStudios.Pathfinding.PriorityQueues
 {
-    internal class FibonacciHeapNode<TKey, TValue> : INode<TKey, TValue>, IComparable,
-        IComparable<FibonacciHeapNode<TKey, TValue>> where TKey : IComparable, IComparable<TKey>
+    internal class FibonacciHeapNode<TKey, TValue> : IPair<TKey, TValue> where TKey : IComparable, IComparable<TKey>
     {
         public TKey Key { get; private set; }
 
@@ -25,16 +24,6 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
         {
             Key = key;
             Value = value;
-        }
-
-        public int CompareTo(object obj)
-        {
-            return CompareTo(obj as FibonacciHeap<TKey, TValue>);
-        }
-
-        public int CompareTo(FibonacciHeapNode<TKey, TValue> other)
-        {
-            return Key.CompareTo(other.Key);
         }
     }
 }
