@@ -19,7 +19,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
 
         public IPair<TKey, TValue> Push(TKey key, TValue value)
         {
-            var node = new SortedListNode<TKey, TValue>
+            var node = new PairNode<TKey, TValue>
             {
                 Key = key,
                 Value = value
@@ -42,7 +42,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
         {
             _list.Remove(item);
 
-            var node = item as SortedListNode<TKey, TValue>;
+            var node = item as PairNode<TKey, TValue>;
             node.Key = newKey;
 
             LinearAddition(node);

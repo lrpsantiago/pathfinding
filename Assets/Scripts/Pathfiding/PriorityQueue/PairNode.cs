@@ -2,7 +2,7 @@
 
 namespace PushingBoxStudios.Pathfinding.PriorityQueues
 {
-    internal class SortedListNode<TKey, TValue> : IPair<TKey, TValue> where TKey : IComparable, IComparable<TKey>
+    internal class PairNode<TKey, TValue> : IPair<TKey, TValue> where TKey : IComparable, IComparable<TKey>
     {
         public TKey Key { get; internal set; }
 
