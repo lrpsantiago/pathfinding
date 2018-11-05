@@ -63,13 +63,13 @@
      <Compile Include="Assets\Scripts\Pathfiding\Location.cs" />
      <Compile Include="Assets\Scripts\Pathfiding\Path.cs" />
      <Compile Include="Assets\Scripts\Pathfiding\PathfindingStatistics.cs" />
-     <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\AStarBinaryHeap.cs" />
+     <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\BinaryHeap.cs" />
      <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\FibonacciHeap.cs" />
      <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\FibonacciHeapNode.cs" />
      <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\IPair.cs" />
      <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\IPriorityQueue.cs" />
+     <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\PairNode.cs" />
      <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\SortedList.cs" />
-     <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\SortedListNode.cs" />
      <Compile Include="Assets\Scripts\PathfinderRobot.cs" />
      <Compile Include="Assets\Scripts\RtsCameraHandler.cs" />
      <Compile Include="Assets\Scripts\StatisticsRecorder.cs" />
