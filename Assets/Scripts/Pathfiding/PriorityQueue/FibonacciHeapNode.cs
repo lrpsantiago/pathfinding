@@ -16,7 +16,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
 
         public FibonacciHeapNode<TKey, TValue> Next { get; set; }
 
-        public IList<FibonacciHeapNode<TKey, TValue>> Children { get; set; }
+        public FibonacciHeapNode<TKey, TValue> Child { get; set; }
 
         public FibonacciHeapNode(TKey key, TValue value)
         {
@@ -24,7 +24,6 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
             Value = value;
             Previous = this;
             Next = this;
-            Children = new List<FibonacciHeapNode<TKey, TValue>>();
         }
     }
 }

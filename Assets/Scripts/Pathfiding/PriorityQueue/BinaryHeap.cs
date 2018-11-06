@@ -175,125 +175,155 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
         }
     }
 
-    //public class Heap<TKey, TValue> : IPriorityQueue<TKey, TValue> where TKey : IComparable, IComparable<TKey>
-    //{
-    //    private List<IPair<TKey, TValue>> _heap;
+    public class Heap<TKey, TValue> : IPriorityQueue<TKey, TValue> where TKey : IComparable, IComparable<TKey>
+    {
+        private List<IPair<TKey, TValue>> _heap;
 
-    //    public HeapType Type { get; private set; }
+        public HeapType Type { get; private set; }
 
-    //    public int Count
-    //    {
-    //        get { return _heap.Count; }
-    //    }
+        public int Count
+        {
+            get { return _heap.Count; }
+        }
 
-    //    public Heap(HeapType type = HeapType.MinHeap)
-    //    {
-    //        _heap = new List<IPair<TKey, TValue>>();
-    //        Type = type;
-    //    }
+        public Heap(HeapType type = HeapType.MinHeap)
+        {
+            _heap = new List<IPair<TKey, TValue>>();
+            Type = type;
+        }
 
-    //    public IPair<TKey, TValue> Push(TKey key, TValue value)
-    //    {
-    //        var node = new SortedListNode<TKey, TValue>
-    //        {
-    //            Key = key,
-    //            Value = value
-    //        };
+        public IPair<TKey, TValue> Push(TKey key, TValue value)
+        {
+            var node = new PairNode<TKey, TValue>
+            {
+                Key = key,
+                Value = value
+            };
 
-    //        _heap.Add(node);
+            _heap.Add(node);
 
-    //        var i = _heap.Count - 1;
-    //        var flag = true;
+            var i = _heap.Count - 1;
+            var flag = true;
 
-    //        if (Type == HeapType.MaxHeap)
-    //        {
-    //            flag = false;
-    //        }
+            if (Type == HeapType.MaxHeap)
+            {
+                flag = false;
+            }
 
-    //        while (i > 0)
-    //        {
-    //            if ((_heap[i].CompareTo(_heap[(i - 1) / 2].Key) > 0) ^ flag)
-    //            {
-    //                var temp = _heap[i];
-    //                _heap[i] = _heap[(i - 1) / 2];
-    //                _heap[(i - 1) / 2] = temp;
-    //                i = (i - 1) / 2;
-    //            }
-    //            else
-    //            {
-    //                break;
-    //            }
-    //        }
+            while (i > 0)
+            {
+                if ((_heap[i].CompareTo(_heap[(i - 1) / 2]) > 0) ^ flag)
+                {
+                    var temp = _heap[i];
+                    _heap[i] = _heap[(i - 1) / 2];
+                    _heap[(i - 1) / 2] = temp;
+                    i = (i - 1) / 2;
+                }
+                else
+                {
+                    break;
+                }
+            }
 
-    //        return node;
-    //    }
+            return node;
+        }
 
-    //    public IPair<TKey, TValue> Pop()
-    //    {
-    //        var result = _heap[0];
+        public IPair<TKey, TValue> Pop()
+        {
+            var result = _heap[0];
 
-    //        DeleteRoot();
+            DeleteRoot();
 
-    //        return result;
-    //    }
+            return result;
+        }
 
-    //    public void DecreaseKey(IPair<TKey, TValue> node, TKey newKey)
-    //    {
-    //        var item = node as SortedListNode<TKey, TValue>;
+        public void DecreaseKey(IPair<TKey, TValue> node, TKey newKey)
+        {
+            _heap.Remove(node);
 
-    //        item.Key = newKey;
+            var item = node as PairNode<TKey, TValue>;
+            item.Key = newKey;
 
-    //        //throw new NotImplementedException();
-    //    }
+            Push(node);
+        }
 
-    //    private void DeleteRoot()
-    //    {
-    //        int i = _heap.Count - 1;
+        private void Push(IPair<TKey, TValue> node)
+        {
+            _heap.Add(node);
 
-    //        _heap[0] = _heap[i];
-    //        _heap.RemoveAt(i);
+            var i = _heap.Count - 1;
+            var flag = true;
 
-    //        i = 0;
+            if (Type == HeapType.MaxHeap)
+            {
+                flag = false;
+            }
 
-    //        bool flag = true;
+            while (i > 0)
+            {
+                if ((_heap[i].CompareTo(_heap[(i - 1) / 2]) > 0) ^ flag)
+                {
+                    var temp = _heap[i];
+                    _heap[i] = _heap[(i - 1) / 2];
+                    _heap[(i - 1) / 2] = temp;
+                    i = (i - 1) / 2;
+                }
+                else
+                {
+                    break;
+                }
+            }
 
-    //        if (Type == HeapType.MaxHeap)
-    //            flag = false;
+        }
 
-    //        while (true)
-    //        {
-    //            int leftInd = 2 * i + 1;
-    //            int rightInd = 2 * i + 2;
-    //            int largest = i;
+        private void DeleteRoot()
+        {
+            int i = _heap.Count - 1;
 
-    //            if (leftInd < _heap.Count)
-    //            {
-    //                if ((_heap[leftInd].CompareTo(_heap[largest]) > 0) ^ flag)
-    //                {
-    //                    largest = leftInd;
-    //                }
-    //            }
+            _heap[0] = _heap[i];
+            _heap.RemoveAt(i);
 
-    //            if (rightInd < _heap.Count)
-    //            {
-    //                if ((_heap[rightInd].CompareTo(_heap[largest]) > 0) ^ flag)
-    //                {
-    //                    largest = rightInd;
-    //                }
-    //            }
+            i = 0;
 
-    //            if (largest != i)
-    //            {
-    //                var temp = _heap[largest];
-    //                _heap[largest] = _heap[i];
-    //                _heap[i] = temp;
-    //                i = largest;
-    //            }
-    //            else
-    //            {
-    //                break;
-    //            }
-    //        }
-    //    }
-    //}
+            bool flag = true;
+
+            if (Type == HeapType.MaxHeap)
+                flag = false;
+
+            while (true)
+            {
+                int leftInd = 2 * i + 1;
+                int rightInd = 2 * i + 2;
+                int largest = i;
+
+                if (leftInd < _heap.Count)
+                {
+                    if ((_heap[leftInd].CompareTo(_heap[largest]) > 0) ^ flag)
+                    {
+                        largest = leftInd;
+                    }
+                }
+
+                if (rightInd < _heap.Count)
+                {
+                    if ((_heap[rightInd].CompareTo(_heap[largest]) > 0) ^ flag)
+                    {
+                        largest = rightInd;
+                    }
+                }
+
+                if (largest != i)
+                {
+                    var temp = _heap[largest];
+                    _heap[largest] = _heap[i];
+                    _heap[i] = temp;
+                    i = largest;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using UnityEngine;
 
 namespace Assets.Scripts
 {
@@ -38,13 +39,18 @@ namespace Assets.Scripts
         public void Add(PathfindingStatisticsRecord statistics)
         {
             _records.Add(statistics);
+
+            if (_records.Count >= 1000)
+            {
+                Debug.Break();
+            }
         }
 
         public void SaveAsCsvFile(string fileName)
         {
             var builder = new StringBuilder();
 
-            builder.AppendLine("Index;Time Lapsed;Interations;Grid Nodes;Opened Nodes;Closed Nodes;Path Length;Path Cost");
+            builder.AppendLine("Index;Time Lapsed;Iterations;Grid Nodes;Opened Nodes;Closed Nodes;Path Length;Path Cost");
 
             for (int i = 0; i < _records.Count; i++)
             {
@@ -61,7 +67,7 @@ namespace Assets.Scripts
         private string CreateCsvLine(int index, PathfindingStatisticsRecord statstics)
         {
             return index + ";" +
-                statstics.TimeLapsed.ToString(CultureInfo.GetCultureInfo("pt-br")) + ";" +
+                statstics.TimeLapsed.ToString(CultureInfo.GetCultureInfo("en-us")) + ";" +
                 statstics.IterationsCount + ";" +
                 statstics.TotalGridNodes + ";" +
                 statstics.OpenedNodesCount + ";" +
