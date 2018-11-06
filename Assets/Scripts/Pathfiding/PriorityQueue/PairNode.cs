@@ -7,5 +7,15 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
         public TKey Key { get; internal set; }
 
         public TValue Value { get; internal set; }
+
+        public int CompareTo(object obj)
+        {
+            return CompareTo(obj as IPair<TKey, TValue>);
+        }
+
+        public int CompareTo(IPair<TKey, TValue> other)
+        {
+            return Key.CompareTo(other.Key);
+        }
     }
 }

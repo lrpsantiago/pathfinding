@@ -54,7 +54,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
             {
                 var otherNode = _list[i];
 
-                if (item.Key.CompareTo(otherNode.Key) < 0)
+                if (item.CompareTo(otherNode) < 0)
                 {
                     _list.Insert(i, item);
                     return;

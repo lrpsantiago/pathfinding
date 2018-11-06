@@ -65,7 +65,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
             _rootList.AddLast(node);
             Count++;
 
-            if (node.Key.CompareTo(_minNode.Key) < 0)
+            if (node.CompareTo(_minNode) < 0)
             {
                 _minNode = node;
             }
@@ -90,8 +90,15 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
             var prev = node.Previous;
             var next = node.Next;
 
-            prev.Next = next;
-            next.Previous = prev;
+            if (prev != null)
+            {
+                prev.Next = next;
+            }
+
+            if (next != null)
+            {
+                next.Previous = prev;
+            }
 
             node.Next = null;
             node.Previous = null;

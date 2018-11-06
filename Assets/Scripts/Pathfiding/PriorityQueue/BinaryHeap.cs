@@ -35,7 +35,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
 
             var lastIndex = _heap.Count - 1;
 
-            if (_heap[lastIndex].Key.CompareTo(_heap[0].Key) < 0)
+            if (_heap[lastIndex].CompareTo(_heap[0]) < 0)
             {
                 Swap(0, lastIndex);
             }
@@ -69,7 +69,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
 
             var lastIndex = _heap.Count - 1;
 
-            if (_heap[lastIndex].Key.CompareTo(_heap[0].Key) < 0)
+            if (_heap[lastIndex].CompareTo(_heap[0]) < 0)
             {
                 Swap(0, lastIndex);
             }
@@ -87,7 +87,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
                 var parentIndex = GetParentIndex(nodeIndex);
                 var parent = _heap[parentIndex];
 
-                if (current.Key.CompareTo(parent.Key) < 0)
+                if (current.CompareTo(parent) < 0)
                 {
                     Swap(nodeIndex, parentIndex);
                     nodeIndex = parentIndex;
@@ -114,7 +114,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
                     var best = _heap[bestIndex];
                     var left = _heap[leftIndex];
 
-                    if (best.Key.CompareTo(left.Key) > 0)
+                    if (best.CompareTo(left) > 0)
                     {
                         bestIndex = leftIndex;
                     }
@@ -125,7 +125,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
                     var best = _heap[bestIndex];
                     var right = _heap[rightIndex];
 
-                    if (best.Key.CompareTo(right.Key) > 0)
+                    if (best.CompareTo(right) > 0)
                     {
                         bestIndex = rightIndex;
                     }
@@ -212,7 +212,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
 
     //        while (i > 0)
     //        {
-    //            if ((_heap[i].Key.CompareTo(_heap[(i - 1) / 2].Key) > 0) ^ flag)
+    //            if ((_heap[i].CompareTo(_heap[(i - 1) / 2].Key) > 0) ^ flag)
     //            {
     //                var temp = _heap[i];
     //                _heap[i] = _heap[(i - 1) / 2];
@@ -268,7 +268,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
 
     //            if (leftInd < _heap.Count)
     //            {
-    //                if ((_heap[leftInd].Key.CompareTo(_heap[largest].Key) > 0) ^ flag)
+    //                if ((_heap[leftInd].CompareTo(_heap[largest]) > 0) ^ flag)
     //                {
     //                    largest = leftInd;
     //                }
@@ -276,7 +276,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
 
     //            if (rightInd < _heap.Count)
     //            {
-    //                if ((_heap[rightInd].Key.CompareTo(_heap[largest].Key) > 0) ^ flag)
+    //                if ((_heap[rightInd].CompareTo(_heap[largest]) > 0) ^ flag)
     //                {
     //                    largest = rightInd;
     //                }
