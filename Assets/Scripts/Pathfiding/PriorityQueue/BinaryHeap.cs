@@ -20,7 +20,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
 
         public BinaryHeap()
         {
-            _heap = new List<IPair<TKey, TValue>>();
+            _heap = new List<IPair<TKey, TValue>>(1048576);
         }
 
         public IPair<TKey, TValue> Push(TKey key, TValue item)
@@ -188,7 +188,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
 
         public Heap(HeapType type = HeapType.MinHeap)
         {
-            _heap = new List<IPair<TKey, TValue>>();
+            _heap = new List<IPair<TKey, TValue>>(1048576);
             Type = type;
         }
 

@@ -5,7 +5,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
 {
     internal class SortedList<TKey, TValue> : IPriorityQueue<TKey, TValue> where TKey : IComparable, IComparable<TKey>
     {
-        private IList<IPair<TKey, TValue>> _list;
+        private List<IPair<TKey, TValue>> _list;
 
         public int Count
         {
@@ -14,7 +14,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
 
         public SortedList()
         {
-            _list = new List<IPair<TKey, TValue>>();
+            _list = new List<IPair<TKey, TValue>>(1048576);
         }
 
         public IPair<TKey, TValue> Push(TKey key, TValue value)
@@ -25,9 +25,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
                 Value = value
             };
 
-            LinearAddition(node);
-
-            return node;
+            return Push(node);
         }
 
         public IPair<TKey, TValue> Pop()
@@ -45,7 +43,15 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
             var node = item as PairNode<TKey, TValue>;
             node.Key = newKey;
 
+            Push(node);
+        }
+
+        private IPair<TKey, TValue> Push(IPair<TKey, TValue> node)
+        {
             LinearAddition(node);
+            //BinarySearchAddition(node);
+
+            return node;
         }
 
         private void LinearAddition(IPair<TKey, TValue> item)
@@ -62,6 +68,23 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
             }
 
             _list.Add(item);
+        }
+
+        private void BinarySearchAddition(IPair<TKey, TValue> item)
+        {
+            if (Count <= 0)
+            {
+                _list.Add(item);
+                return;
+            }
+
+            var index = _list.BinarySearch(item);
+
+            index = index < 0 
+                ? ~index 
+                : index;
+
+            _list.Insert(index, item);
         }
     }
 }

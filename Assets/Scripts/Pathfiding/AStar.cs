@@ -163,53 +163,53 @@ namespace PushingBoxStudios.Pathfinding
 
         private void SetAdjacentArray(Location[] adjacents, Location hotspot)
         {
-            adjacents[0].X = hotspot.X;
-            adjacents[0].Y = hotspot.Y - 1;
-
-            adjacents[1].X = hotspot.X;
-            adjacents[1].Y = hotspot.Y + 1;
-
-            adjacents[2].X = hotspot.X - 1;
-            adjacents[2].Y = hotspot.Y;
-
-            adjacents[3].X = hotspot.X + 1;
-            adjacents[3].Y = hotspot.Y;
-
-            adjacents[4].X = hotspot.X - 1;
-            adjacents[4].Y = hotspot.Y - 1;
-
-            adjacents[5].X = hotspot.X + 1;
-            adjacents[5].Y = hotspot.Y - 1;
-
-            adjacents[6].X = hotspot.X - 1;
-            adjacents[6].Y = hotspot.Y + 1;
-
-            adjacents[7].X = hotspot.X + 1;
-            adjacents[7].Y = hotspot.Y + 1;
-
-            //adjacents[0].X = hotspot.X - 1;
+            //adjacents[0].X = hotspot.X;
             //adjacents[0].Y = hotspot.Y - 1;
 
-            //adjacents[1].X = hotspot.X + 1;
-            //adjacents[1].Y = hotspot.Y - 1;
+            //adjacents[1].X = hotspot.X;
+            //adjacents[1].Y = hotspot.Y + 1;
 
             //adjacents[2].X = hotspot.X - 1;
-            //adjacents[2].Y = hotspot.Y + 1;
+            //adjacents[2].Y = hotspot.Y;
 
             //adjacents[3].X = hotspot.X + 1;
-            //adjacents[3].Y = hotspot.Y + 1;
+            //adjacents[3].Y = hotspot.Y;
 
-            //adjacents[4].X = hotspot.X;
+            //adjacents[4].X = hotspot.X - 1;
             //adjacents[4].Y = hotspot.Y - 1;
 
-            //adjacents[5].X = hotspot.X;
-            //adjacents[5].Y = hotspot.Y + 1;
+            //adjacents[5].X = hotspot.X + 1;
+            //adjacents[5].Y = hotspot.Y - 1;
 
             //adjacents[6].X = hotspot.X - 1;
-            //adjacents[6].Y = hotspot.Y;
+            //adjacents[6].Y = hotspot.Y + 1;
 
             //adjacents[7].X = hotspot.X + 1;
-            //adjacents[7].Y = hotspot.Y;
+            //adjacents[7].Y = hotspot.Y + 1;
+
+            adjacents[0].X = hotspot.X - 1;
+            adjacents[0].Y = hotspot.Y - 1;
+
+            adjacents[1].X = hotspot.X + 1;
+            adjacents[1].Y = hotspot.Y - 1;
+
+            adjacents[2].X = hotspot.X - 1;
+            adjacents[2].Y = hotspot.Y + 1;
+
+            adjacents[3].X = hotspot.X + 1;
+            adjacents[3].Y = hotspot.Y + 1;
+
+            adjacents[4].X = hotspot.X;
+            adjacents[4].Y = hotspot.Y - 1;
+
+            adjacents[5].X = hotspot.X;
+            adjacents[5].Y = hotspot.Y + 1;
+
+            adjacents[6].X = hotspot.X - 1;
+            adjacents[6].Y = hotspot.Y;
+
+            adjacents[7].X = hotspot.X + 1;
+            adjacents[7].Y = hotspot.Y;
         }
 
         private uint CalculateHeuristicCost(Location from, Location goal)
