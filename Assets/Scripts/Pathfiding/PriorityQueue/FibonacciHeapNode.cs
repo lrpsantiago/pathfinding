@@ -12,9 +12,9 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
 
         public FibonacciHeapNode<TKey, TValue> Parent { get; set; }
 
-        public FibonacciHeapNode<TKey, TValue> Previous { get; set; }
+        public FibonacciHeapNode<TKey, TValue> Left { get; set; }
 
-        public FibonacciHeapNode<TKey, TValue> Next { get; set; }
+        public FibonacciHeapNode<TKey, TValue> Right { get; set; }
 
         public FibonacciHeapNode<TKey, TValue> Child { get; set; }
 
@@ -22,8 +22,8 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
         {
             Key = key;
             Value = value;
-            Previous = this;
-            Next = this;
+            Left = this;
+            Right = this;
         }
     }
 }
