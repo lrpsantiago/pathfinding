@@ -1,25 +1,23 @@
-﻿using System;
-
-namespace PushingBoxStudios.Pathfinding
+﻿namespace PushingBoxStudios.Pathfinding
 {
     internal class Agent : IAgent
     {
-        private Grid m_grid;
-        private Location m_position;
-        private Path m_path;
+        private readonly Grid _grid;
+        private Location _position;
+        private Path _path;
 
         public Agent(Grid grid, uint x, uint y)
         {
-            m_grid = grid;
-            m_position = new Location((int)x, (int)y);
-            m_path = null;
+            _grid = grid;
+            _position = new Location((int)x, (int)y);
+            _path = null;
         }
 
         public Agent(Grid grid, Location position)
         {
-            m_grid = grid;
-            m_position = position;
-            m_path = null;
+            _grid = grid;
+            _position = position;
+            _path = null;
         }
 
         public IPath FindPath(uint x, uint y)
@@ -30,21 +28,21 @@ namespace PushingBoxStudios.Pathfinding
         public IPath FindPath(Location goal)
         {
             AbstractPathfinder algorithm = new AStar();
-            m_path = algorithm.FindPath(m_grid, m_position, goal);
+            _path = algorithm.FindPath(_grid, _position, goal);
 
-            return m_path;
+            return _path;
         }
 
         public void MoveOnPath(uint steps)
         {
-            if (steps <= m_path.OriginalSize)
+            if (steps <= _path.OriginalSize)
             {
                 for (uint i = 0; i < steps; i++)
                 {
-                    m_path.PopFront();
+                    _path.PopFront();
                 }
 
-                m_position = m_path.Front;
+                _position = _path.Front;
             }
         }
     }

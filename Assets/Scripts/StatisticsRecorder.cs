@@ -40,7 +40,7 @@ namespace Assets.Scripts
         {
             _records.Add(statistics);
 
-            if (_records.Count >= 1000)
+            if (_records.Count >= 8243)
             {
                 Debug.Break();
             }

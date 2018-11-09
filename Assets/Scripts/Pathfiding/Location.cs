@@ -27,7 +27,7 @@ namespace PushingBoxStudios.Pathfinding
         {
             if (obj is Location)
             {
-                Location other = (Location)obj;
+                var other = (Location)obj;
                 return this == other;
             }
             else

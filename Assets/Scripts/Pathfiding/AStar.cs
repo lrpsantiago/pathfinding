@@ -26,7 +26,7 @@ namespace PushingBoxStudios.Pathfinding
                 return p;
             }
             
-            var openList = new PriorityQueues.SortedList<uint, Location>();
+            var openList = new FibonacciHeap<uint, Location>(0);
             var isClosed = new bool[grid.Width, grid.Height];
             var soFarCost = new uint[grid.Width, grid.Height];
             var parents = new Location?[grid.Width, grid.Height];
@@ -51,7 +51,7 @@ namespace PushingBoxStudios.Pathfinding
 
                 SetAdjacentArray(adjacents, hotspot);
 
-                for (int i = 0; i < adjacents.Length; i++)
+                for (var i = 0; i < adjacents.Length; i++)
                 {
                     var pos = adjacents[i];
 

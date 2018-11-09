@@ -25,24 +25,23 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
 
         public void DecreaseKey(IPair<TKey, TValue> node, TKey newKey)
         {
-            var nodeH = node as FibonacciHeapNode<TKey, TValue>;
-
             if (newKey.CompareTo(node.Key) > 0)
             {
                 throw new ArgumentException("decreaseKey() got larger key value");
             }
 
+            var nodeH = node as FibonacciHeapNode<TKey, TValue>;
             nodeH.Key = newKey;
 
             var parent = nodeH.Parent;
 
-            if ((parent != null) && (node.Key.CompareTo(parent.Key) < 0))
+            if ((parent != null) && (node.CompareTo(parent) < 0))
             {
                 Cut(nodeH, parent);
                 CascadingCut(parent);
             }
 
-            if (node.Key.CompareTo(_minNode.Key) < 0)
+            if (node.CompareTo(_minNode) < 0)
             {
                 _minNode = nodeH;
             }
@@ -155,7 +154,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
                         newHeap._minNode.Right = heapB._minNode;
                         heapB._minNode.Left = newHeap._minNode;
 
-                        if (heapB._minNode.Key.CompareTo(heapA._minNode.Key) < 0)
+                        if (heapB._minNode.CompareTo(heapA._minNode) < 0)
                         {
                             newHeap._minNode = heapB._minNode;
                         }
@@ -174,23 +173,19 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
 
         private void CascadingCut(FibonacciHeapNode<TKey, TValue> node)
         {
-            var parent = node.Parent;
-
-            // if there's a parent...
-            if (parent != null)
+            while (node.Parent != null)
             {
-                // if newChild is unmarked, set it marked
+                var parent = node.Parent;
+
                 if (!node.IsMarked)
                 {
                     node.IsMarked = true;
+                    break;
                 }
                 else
                 {
-                    // it's marked, cut it from parent
                     Cut(node, parent);
-
-                    // cut its parent as well
-                    CascadingCut(parent);
+                    node = parent;
                 }
             }
         }
@@ -292,7 +287,7 @@ namespace PushingBoxStudios.Pathfinding.PriorityQueues
                     y.Right.Left = y;
 
                     // Check if this is a new min.
-                    if (y.Key.CompareTo(_minNode.Key) < 0)
+                    if (y.CompareTo(_minNode) < 0)
                     {
                         _minNode = y;
                     }
