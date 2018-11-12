@@ -33,7 +33,8 @@ namespace Assets.Scripts
             _animator = GetComponent<Animator>();
             _grid = _mapBuilder.Grid;
 
-            _pathfinder = new AStar();
+            _pathfinder = new AStarPathfinder();
+            //_pathfinder = new DijkstraPathfinder();
         }
 
         public void Update()

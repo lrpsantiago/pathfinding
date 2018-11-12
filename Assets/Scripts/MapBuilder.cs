@@ -8,7 +8,7 @@ namespace Assets.Scripts
     public class MapBuilder : MonoBehaviour
     {
         [SerializeField]
-        private Transform _ground;
+        private GameObject _ground;
 
         [SerializeField]
         private GameObject _obstaclePrefab;
@@ -43,10 +43,13 @@ namespace Assets.Scripts
                 y = 1,
                 z = (float)Grid.Height / 10
             };
-
-            _ground.localScale = scale;
+            
+            _ground.transform.localScale = scale;
             var renderer = _ground.GetComponent<Renderer>();
             renderer.material.mainTextureScale = new Vector2(Grid.Width, Grid.Height);
+
+            var collider =  _ground.AddComponent<MeshCollider>();
+            collider.enabled = true;
         }
 
         private void CreateObstacles()

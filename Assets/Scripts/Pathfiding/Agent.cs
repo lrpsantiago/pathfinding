@@ -27,7 +27,7 @@
 
         public IPath FindPath(Location goal)
         {
-            AbstractPathfinder algorithm = new AStar();
+            AbstractPathfinder algorithm = new AStarPathfinder();
             _path = algorithm.FindPath(_grid, _position, goal);
 
             return _path;

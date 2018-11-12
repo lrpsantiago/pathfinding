@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace PushingBoxStudios.Pathfinding
 {
-    internal class AStar : AbstractPathfinder
+    internal class AStarPathfinder : AbstractPathfinder
     {
         private static readonly uint STRAIGHTCOST = 100;
         private static readonly uint DIAGONALCOST = 141;
