@@ -28,6 +28,11 @@ namespace Assets.Scripts
 
         public IPath CurrentPath { get { return _currentPath; } }
 
+        public void Awake()
+        {
+            _mapBuilder.MapBuilt += OnMapBuilt;
+        }
+
         public void Start()
         {
             _animator = GetComponent<Animator>();
@@ -89,6 +94,7 @@ namespace Assets.Scripts
         public void OnDestroy()
         {
             StatisticsRecorder.Instance.SaveAsCsvFile("PathfindingStatistics");
+            StatisticsRecorder.Instance.SaveAsCsvFile("PathfindingLocations");
         }
 
         public void FindPath(Vector3 pos)
@@ -110,6 +116,7 @@ namespace Assets.Scripts
 
             var statistics = _pathfinder.Statistics.Record();
             StatisticsRecorder.Instance.Add(statistics);
+            LocationRecorder.Instance.Add(goal);
 
             OnPathFound();
             _currentPath.PopFront();
@@ -150,6 +157,11 @@ namespace Assets.Scripts
             {
                 PathFound(this, EventArgs.Empty);
             }
+        }
+
+        private void OnMapBuilt(object sender, EventArgs e)
+        {
+            transform.position = _mapBuilder.Spawnpoint;
         }
     }
 }

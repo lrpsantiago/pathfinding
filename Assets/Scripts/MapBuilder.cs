@@ -1,6 +1,8 @@
 ﻿using PushingBoxStudios.Pathfinding;
+using PushingBoxStudios.Pathfinding.PriorityQueues;
 using PushingBoxStudios.SteampunkTd.Cameras;
 using PushingBoxStudios.SteampunkTd.Maps;
+using System;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -18,6 +20,10 @@ namespace Assets.Scripts
 
         public Grid Grid { get; private set; }
 
+        public Vector3 Spawnpoint { get; private set; }
+
+        public event EventHandler MapBuilt;
+
         private void Awake()
         {
             var tex = Resources.Load<Texture2D>("Textures/Maps/" + _mapImageFile);
@@ -27,12 +33,45 @@ namespace Assets.Scripts
 
         private void Start()
         {
-            var rtsCam = GameObject.Find("RtsCamera").GetComponent<RtsCameraHandler>();
+            var rtsCam = GameObject.Find("RtsCamera")
+                .GetComponent<RtsCameraHandler>();
+
             rtsCam.MinBounds = new Vector3(-Grid.Width / 2, 0, -Grid.Width / 2);
             rtsCam.MaxBounds = new Vector3(Grid.Width / 2, 0, Grid.Width / 2);
 
             SetupGround();
             CreateObstacles();
+            SetSpawnpoint();
+            OnMapBuilt();
+        }
+
+        private void SetSpawnpoint()
+        {
+            var startX = (int)Grid.Width / 2;
+            var startY = (int)Grid.Height / 2;
+            var hotspot = new Location(startX, startY);
+            var frontier = new SortedList<int, Location>();
+
+            while (!Grid[hotspot])
+            {
+                for (int y = hotspot.Y - 1; y <= hotspot.Y + 1; y++)
+                {
+                    for (int x = hotspot.X - 1; x <= hotspot.X + 1; x++)
+                    {
+                        if (hotspot.X == x && hotspot.Y == y)
+                        {
+                            continue;
+                        }
+
+                        var key = Math.Abs(x - startX) + Math.Abs(y - startY);
+                        frontier.Push(key, new Location(x, y));
+                    }
+                }
+
+                hotspot = frontier.Pop().Value;
+            }
+
+            Spawnpoint = GridToSpace(hotspot);
         }
 
         private void SetupGround()
@@ -43,12 +82,26 @@ namespace Assets.Scripts
                 y = 1,
                 z = (float)Grid.Height / 10
             };
-            
+
             _ground.transform.localScale = scale;
+            var pos = _ground.transform.position;
+
+            if (Grid.Width % 2 == 0)
+            {
+                pos.x -= 0.5f;
+            }
+
+            if (Grid.Height % 2 == 0)
+            {
+                pos.z += 0.5f;
+            }
+
+            _ground.transform.position = pos;
+
             var renderer = _ground.GetComponent<Renderer>();
             renderer.material.mainTextureScale = new Vector2(Grid.Width, Grid.Height);
 
-            var collider =  _ground.AddComponent<MeshCollider>();
+            var collider = _ground.AddComponent<MeshCollider>();
             collider.enabled = true;
         }
 
@@ -89,6 +142,14 @@ namespace Assets.Scripts
                 X = Mathf.RoundToInt(pos.x) + (int)Grid.Width / 2,
                 Y = Mathf.RoundToInt(-pos.z) + (int)Grid.Height / 2
             };
+        }
+
+        protected virtual void OnMapBuilt()
+        {
+            if (MapBuilt != null)
+            {
+                MapBuilt(this, EventArgs.Empty);
+            }
         }
     }
 }

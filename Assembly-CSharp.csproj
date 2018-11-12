@@ -47,13 +47,15 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\EMouseButton.cs" />
+     <Compile Include="Assets\Scripts\LocationRecorder.cs" />
      <Compile Include="Assets\Scripts\LocationSelector.cs" />
      <Compile Include="Assets\Scripts\MapBuilder.cs" />
      <Compile Include="Assets\Scripts\MapReader.cs" />
      <Compile Include="Assets\Scripts\PathPlotter.cs" />
-     <Compile Include="Assets\Scripts\Pathfiding\AStar.cs" />
+     <Compile Include="Assets\Scripts\Pathfiding\AStarPathfinder.cs" />
      <Compile Include="Assets\Scripts\Pathfiding\AbstractPathfinder.cs" />
      <Compile Include="Assets\Scripts\Pathfiding\Agent.cs" />
+     <Compile Include="Assets\Scripts\Pathfiding\DijkstraPathfinder.cs" />
      <Compile Include="Assets\Scripts\Pathfiding\EProbeMode.cs" />
      <Compile Include="Assets\Scripts\Pathfiding\Grid.cs" />
      <Compile Include="Assets\Scripts\Pathfiding\IAgent.cs" />
