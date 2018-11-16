@@ -13,14 +13,12 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectGenerator>VSTU</UnityProjectGenerator>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.6.6f2</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -82,14 +80,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\EMouseButton.cs" />
+    <Compile Include="Assets\Scripts\LocationRecorder.cs" />
     <Compile Include="Assets\Scripts\LocationSelector.cs" />
     <Compile Include="Assets\Scripts\MapBuilder.cs" />
     <Compile Include="Assets\Scripts\MapReader.cs" />
-    <Compile Include="Assets\Scripts\Pathfiding\DijkstraPathfinder.cs" />
     <Compile Include="Assets\Scripts\PathPlotter.cs" />
     <Compile Include="Assets\Scripts\Pathfiding\AStarPathfinder.cs" />
     <Compile Include="Assets\Scripts\Pathfiding\AbstractPathfinder.cs" />
     <Compile Include="Assets\Scripts\Pathfiding\Agent.cs" />
+    <Compile Include="Assets\Scripts\Pathfiding\DijkstraPathfinder.cs" />
     <Compile Include="Assets\Scripts\Pathfiding\EProbeMode.cs" />
     <Compile Include="Assets\Scripts\Pathfiding\Grid.cs" />
     <Compile Include="Assets\Scripts\Pathfiding\IAgent.cs" />
@@ -104,8 +103,8 @@
     <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\FibonacciHeapNode.cs" />
     <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\IPair.cs" />
     <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\IPriorityQueue.cs" />
-    <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\SortedList.cs" />
     <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\PairNode.cs" />
+    <Compile Include="Assets\Scripts\Pathfiding\PriorityQueue\SortedList.cs" />
     <Compile Include="Assets\Scripts\PathfinderRobot.cs" />
     <Compile Include="Assets\Scripts\RtsCameraHandler.cs" />
     <Compile Include="Assets\Scripts\StatisticsRecorder.cs" />

@@ -1,5 +1,7 @@
 ﻿using PushingBoxStudios.Pathfinding;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -9,10 +11,9 @@ namespace Assets.Scripts
         private AbstractPathfinder _pathfinder;
         private IPath _currentPath;
         private Animator _animator;
-        private bool _invoked;
+        private bool _doWanderInvoked;
         private Grid _grid;
-
-        public event EventHandler PathFound;
+        private List<Location> _customLocations;
 
         [SerializeField]
         private MapBuilder _mapBuilder;
@@ -26,18 +27,27 @@ namespace Assets.Scripts
         [SerializeField]
         private bool _isWandering = false;
 
+        [SerializeField]
+        private string _customLocationsFile;
+
+        public event EventHandler PathFound;
+
         public IPath CurrentPath { get { return _currentPath; } }
 
         public void Awake()
         {
-            _mapBuilder.MapBuilt += OnMapBuilt;
+            if (_mapBuilder != null)
+            {
+                _mapBuilder.MapBuilt += OnMapBuilt;
+            }
+
+            LoadCustomLocations();
         }
 
         public void Start()
         {
             _animator = GetComponent<Animator>();
             _grid = _mapBuilder.Grid;
-
             _pathfinder = new AStarPathfinder();
             //_pathfinder = new DijkstraPathfinder();
         }
@@ -46,9 +56,9 @@ namespace Assets.Scripts
         {
             if (_currentPath == null || _currentPath.Size == 0)
             {
-                if (_isWandering && !_invoked)
+                if (_isWandering && !_doWanderInvoked)
                 {
-                    _invoked = true;
+                    _doWanderInvoked = true;
                     DoWander();
                     //Invoke("DoWander", 1);
                 }
@@ -84,7 +94,7 @@ namespace Assets.Scripts
 
             pos = _mapBuilder.GridToSpace(_currentPath.Front);
             _currentPath.PopFront();
-            
+
             //pos = Vector3.MoveTowards(pos, targetPos, velocity);
             transform.position = pos;
 
@@ -94,7 +104,7 @@ namespace Assets.Scripts
         public void OnDestroy()
         {
             StatisticsRecorder.Instance.SaveAsCsvFile("PathfindingStatistics");
-            StatisticsRecorder.Instance.SaveAsCsvFile("PathfindingLocations");
+            LocationRecorder.Instance.SaveAsCsvFile("PathfindingLocations");
         }
 
         public void FindPath(Vector3 pos)
@@ -134,21 +144,72 @@ namespace Assets.Scripts
 
         private void DoWander()
         {
-            _invoked = false;
+            _doWanderInvoked = false;
+
+            if (_customLocations != null && _customLocations.Count <= 0)
+            {
+                return;
+            }
+
+            Location location;
+
+            if (_customLocations == null)
+            {
+                location = GetRandomLocation();
+            }
+            else
+            {
+                location = _customLocations[0];
+                _customLocations.RemoveAt(0);
+            }
+
+            var pos = _mapBuilder.GridToSpace(location);
+
+            FindPath(pos);
+        }
+
+        private Location GetRandomLocation()
+        {
             var randLocation = new Location();
 
             do
             {
-                randLocation = new Location
-                {
-                    X = UnityEngine.Random.Range(0, (int)_grid.Width),
-                    Y = UnityEngine.Random.Range(0, (int)_grid.Width)
-                };
+                randLocation.X = UnityEngine.Random.Range(0, (int)_grid.Width);
+                randLocation.Y = UnityEngine.Random.Range(0, (int)_grid.Width);
             }
             while (!_grid[randLocation]);
 
-            var pos = _mapBuilder.GridToSpace(randLocation);
-            FindPath(pos);
+            return randLocation;
+        }
+
+        private void LoadCustomLocations()
+        {
+            if (string.IsNullOrEmpty(_customLocationsFile))
+            {
+                return;
+            }
+
+            if (_customLocations == null)
+            {
+                _customLocations = new List<Location>();
+            }
+
+            _customLocations.Clear();
+
+            var lines = File.ReadAllLines(_customLocationsFile);
+
+            for (int i = 1; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                var values = line.Split(';');
+                var location = new Location
+                {
+                    X = Convert.ToInt32(values[1]),
+                    Y = Convert.ToInt32(values[2])
+                };
+
+                _customLocations.Add(location);
+            }
         }
 
         protected virtual void OnPathFound()
