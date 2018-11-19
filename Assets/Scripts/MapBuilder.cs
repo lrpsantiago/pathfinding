@@ -3,6 +3,7 @@ using PushingBoxStudios.Pathfinding.PriorityQueues;
 using PushingBoxStudios.SteampunkTd.Cameras;
 using PushingBoxStudios.SteampunkTd.Maps;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -50,7 +51,9 @@ namespace Assets.Scripts
             var startX = (int)Grid.Width / 2;
             var startY = (int)Grid.Height / 2;
             var hotspot = new Location(startX, startY);
-            var frontier = new SortedList<int, Location>();
+            var frontier = new PushingBoxStudios.Pathfinding.PriorityQueues.SortedList<int, Location>();
+            var closedList = new List<Location>();
+            var location = new Location();
 
             while (!Grid[hotspot])
             {
@@ -58,7 +61,10 @@ namespace Assets.Scripts
                 {
                     for (int x = hotspot.X - 1; x <= hotspot.X + 1; x++)
                     {
-                        if (hotspot.X == x && hotspot.Y == y)
+                        location.X = x;
+                        location.Y = y;
+
+                        if (hotspot.Equals(location) || closedList.Contains(location))
                         {
                             continue;
                         }
@@ -69,6 +75,7 @@ namespace Assets.Scripts
                 }
 
                 hotspot = frontier.Pop().Value;
+                closedList.Add(hotspot);
             }
 
             Spawnpoint = GridToSpace(hotspot);
