@@ -9,6 +9,7 @@ namespace PushingBoxStudios.Pathfinding
         private uint m_totalGridNodes;
         private uint m_openedNodes;
         private uint m_closedNodes;
+        private uint m_maximumOpenNodes;
         private uint m_iterations;
         private uint m_pathLength;
         private uint m_pathCost;
@@ -37,6 +38,11 @@ namespace PushingBoxStudios.Pathfinding
         public uint ClosedNodesCount
         {
             get { return m_closedNodes; }
+        }
+
+        public uint MaximumOpenNodesCount
+        {
+            get { return m_maximumOpenNodes; }
         }
 
         public uint PathLength
@@ -71,6 +77,16 @@ namespace PushingBoxStudios.Pathfinding
             m_closedNodes++;
         }
 
+        public void UpdateMaximumOpenNodes(uint value)
+        {
+            if(value <= m_maximumOpenNodes)
+            {
+                return;
+            }
+
+            m_maximumOpenNodes = value;
+        }
+
         public void StartTimer()
         {
             m_timeStampStart = DateTime.Now.TimeOfDay.TotalSeconds;
@@ -88,6 +104,7 @@ namespace PushingBoxStudios.Pathfinding
             m_totalGridNodes = 0;
             m_openedNodes = 0;
             m_closedNodes = 0;
+            m_maximumOpenNodes = 0;
             m_iterations = 0;
             m_pathLength = 0;
             m_pathCost = 0;
@@ -95,13 +112,14 @@ namespace PushingBoxStudios.Pathfinding
 
         public override string ToString()
         {
-            return "Time Lapsed..:\t" + TimeLapsed + " s" + "\n" +
-                "Iterations...:\t" + IterationsCount + "\n" +
-                "Total Nodes..:\t" + TotalGridNodes + "\n" +
-                "Opened Nodes.:\t" + OpenedNodesCount + "\n" +
-                "Closed Nodes.:\t" + ClosedNodesCount + "\n" +
-                "Path Length..:\t" + PathLength + "\n" +
-                "Path Cost....:\t" + PathCost + "\n";
+            return "Time Lapsed........:\t" + TimeLapsed + " s" + "\n" +
+                "Iterations.........:\t" + IterationsCount + "\n" +
+                "Total Nodes........:\t" + TotalGridNodes + "\n" +
+                "Opened Nodes.......:\t" + OpenedNodesCount + "\n" +
+                "Closed Nodes.......:\t" + ClosedNodesCount + "\n" +
+                "Maximum Open Nodes.:\t" + MaximumOpenNodesCount + "\n" +
+                "Path Length........:\t" + PathLength + "\n" +
+                "Path Cost..........:\t" + PathCost + "\n";
         }
 
         public PathfindingStatisticsRecord Record()
@@ -113,6 +131,7 @@ namespace PushingBoxStudios.Pathfinding
                 IterationsCount = this.IterationsCount,
                 OpenedNodesCount = this.OpenedNodesCount,
                 ClosedNodesCount = this.ClosedNodesCount,
+                MaximumOpenNodesCount = this.MaximumOpenNodesCount,
                 PathLength = this.PathLength,
                 PathCost = this.PathCost
             };
@@ -130,6 +149,8 @@ namespace PushingBoxStudios.Pathfinding
         public uint OpenedNodesCount { get; set; }
 
         public uint ClosedNodesCount { get; set; }
+
+        public uint MaximumOpenNodesCount { get; set; }
 
         public uint PathLength { get; set; }
 

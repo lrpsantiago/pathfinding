@@ -50,7 +50,7 @@ namespace Assets.Scripts
         {
             var builder = new StringBuilder();
 
-            builder.AppendLine("Index;Time Lapsed;Iterations;Grid Nodes;Opened Nodes;Closed Nodes;Path Length;Path Cost");
+            builder.AppendLine("Index;Time Lapsed;Iterations;Grid Nodes;Opened Nodes;Closed Nodes;Max Open Nodes;Path Length;Path Cost");
 
             for (int i = 0; i < _records.Count; i++)
             {
@@ -72,6 +72,7 @@ namespace Assets.Scripts
                 statstics.TotalGridNodes + ";" +
                 statstics.OpenedNodesCount + ";" +
                 statstics.ClosedNodesCount + ";" +
+                statstics.MaximumOpenNodesCount + ";" +
                 statstics.PathLength + ";" +
                 statstics.PathCost;
         }

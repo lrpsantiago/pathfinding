@@ -26,7 +26,7 @@ namespace PushingBoxStudios.Pathfinding
                 return p;
             }
 
-            var openList = new Heap<uint, Location>();
+            var openList = new FibonacciHeap<uint, Location>(0);
             var isClosed = new bool[grid.Width, grid.Height];
             var soFarCost = new uint[grid.Width, grid.Height];
             var parents = new Location?[grid.Width, grid.Height];
@@ -39,6 +39,8 @@ namespace PushingBoxStudios.Pathfinding
 
             while (hotspot != goal)
             {
+                Statistics.UpdateMaximumOpenNodes((uint)openList.Count);
+
                 if (openList.Count <= 0)
                 {
                     OnPathNotFound();
@@ -91,17 +93,20 @@ namespace PushingBoxStudios.Pathfinding
                                 }
 
                                 var currentParent = parents[pos.X, pos.Y].Value;
-                                var currentCost = soFarCost[currentParent.X, currentParent.Y]
+                                var currentScoreG = soFarCost[currentParent.X, currentParent.Y]
                                     + CalculateDistance(pos, currentParent);
 
-                                var newCost = soFarCost[hotspot.X, hotspot.Y] + CalculateDistance(pos, hotspot);
+                                var newScoreG = soFarCost[hotspot.X, hotspot.Y]
+                                    + CalculateDistance(pos, hotspot);
 
-                                if (newCost < currentCost)
+                                if (newScoreG < currentScoreG)
                                 {
                                     parents[pos.X, pos.Y] = hotspot;
-                                    soFarCost[pos.X, pos.Y] = newCost;
+                                    soFarCost[pos.X, pos.Y] = newScoreG;
 
-                                    openList.DecreaseKey(queueNode[pos.X, pos.Y], newCost);
+                                    var score = newScoreG + CalculateHeuristicCost(pos, goal);
+
+                                    openList.DecreaseKey(queueNode[pos.X, pos.Y], score);
                                 }
                             }
                         }
