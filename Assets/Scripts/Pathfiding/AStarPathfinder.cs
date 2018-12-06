@@ -26,7 +26,7 @@ namespace PushingBoxStudios.Pathfinding
                 return p;
             }
 
-            var openList = new BinaryHeap<uint, Location>();
+            var openList = new Heap<uint, Location>();
             var isClosed = new bool[grid.Width, grid.Height];
             var soFarCost = new uint[grid.Width, grid.Height];
             var parents = new Location?[grid.Width, grid.Height];
