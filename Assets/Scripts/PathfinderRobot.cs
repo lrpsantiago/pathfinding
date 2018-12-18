@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -9,7 +10,6 @@ namespace Assets.Scripts
     public class PathfinderRobot : MonoBehaviour
     {
         private AbstractPathfinder _pathfinder;
-        private IPath _currentPath;
         private Animator _animator;
         private bool _doWanderInvoked;
         private Grid _grid;
@@ -30,9 +30,9 @@ namespace Assets.Scripts
         [SerializeField]
         private string _customLocationsFile;
 
-        public event EventHandler PathFound;
+        public IPath CurrentPath { get; private set; }
 
-        public IPath CurrentPath { get { return _currentPath; } }
+        public event EventHandler PathFound;
 
         public void Awake()
         {
@@ -49,18 +49,16 @@ namespace Assets.Scripts
             _animator = GetComponent<Animator>();
             _grid = _mapBuilder.Grid;
             _pathfinder = new AStarPathfinder();
-            //_pathfinder = new DijkstraPathfinder();
         }
 
         public void Update()
         {
-            if (_currentPath == null || _currentPath.Size == 0)
+            if (CurrentPath == null || CurrentPath.Size == 0)
             {
                 if (_isWandering && !_doWanderInvoked)
                 {
                     _doWanderInvoked = true;
-                    DoWander();
-                    //Invoke("DoWander", 1);
+                    Invoke("DoWander", 1);
                 }
 
                 _animator.SetBool("IsWalking", false);
@@ -70,32 +68,32 @@ namespace Assets.Scripts
             _animator.SetBool("IsWalking", true);
 
             var pos = transform.position;
-            var targetPos = _mapBuilder.GridToSpace(_currentPath.Front);
+            var targetPos = _mapBuilder.GridToSpace(CurrentPath.Front);
             var velocity = _speed * Time.deltaTime;
 
-            //if (pos == targetPos || Vector3.Distance(pos, targetPos) <= float.MaxValue)
-            //{
-            //    _currentPath.PopFront();
-
-            //    if (_currentPath.Size > 0)
-            //    {
-            //        targetPos = _mapBuilder.GridToSpace(_currentPath.Front);
-            //    }
-            //    else
-            //    {
-            //        pos = targetPos;
-            //    }
-            //}
-
-            while (_currentPath.Size > 1)
+            if (pos == targetPos || Vector3.Distance(pos, targetPos) <= velocity)
             {
-                _currentPath.PopFront();
+                CurrentPath.PopFront();
+
+                if (CurrentPath.Size > 0)
+                {
+                    targetPos = _mapBuilder.GridToSpace(CurrentPath.Front);
+                }
+                else
+                {
+                    pos = targetPos;
+                }
             }
 
-            pos = _mapBuilder.GridToSpace(_currentPath.Front);
-            _currentPath.PopFront();
+            //while (_currentPath.Size > 1)
+            //{
+            //    _currentPath.PopFront();
+            //}
 
-            //pos = Vector3.MoveTowards(pos, targetPos, velocity);
+            //pos = _mapBuilder.GridToSpace(_currentPath.Front);
+            //_currentPath.PopFront();
+
+            pos = Vector3.MoveTowards(pos, targetPos, velocity);
             transform.position = pos;
 
             UpdateRotation(targetPos);
@@ -112,24 +110,48 @@ namespace Assets.Scripts
             var start = _mapBuilder.SpaceToGrid(transform.position);
             var goal = _mapBuilder.SpaceToGrid(pos);
 
-            if (start.Equals(goal))
+            if (start.Equals(goal)
+                || CurrentPath != null && CurrentPath.Goal == goal)
             {
                 return;
             }
 
-            _currentPath = _pathfinder.FindPath(_grid, start, goal);
+            var pathfinderThread = new PathfindingThread(_pathfinder, _grid, start, goal, ThreadCallback);
+            var thread = new Thread(pathfinderThread.Run);
 
-            if (_currentPath == null)
+            thread.Start();
+            ////_currentPath = _pathfinder.FindPath(_grid, start, goal);
+
+            //if (_currentPath == null)
+            //{
+            //    return;
+            //}
+
+            //var statistics = _pathfinder.Statistics.Record();
+            //StatisticsRecorder.Instance.Add(statistics);
+            //LocationRecorder.Instance.Add(goal);
+
+            //OnPathFound();
+            //_currentPath.PopFront();
+        }
+
+        private void ThreadCallback(IPath path)
+        {
+            CurrentPath = path;
+
+            if (CurrentPath == null)
             {
                 return;
             }
 
             var statistics = _pathfinder.Statistics.Record();
             StatisticsRecorder.Instance.Add(statistics);
-            LocationRecorder.Instance.Add(goal);
+            //LocationRecorder.Instance.Add(goal);
 
-            OnPathFound();
-            _currentPath.PopFront();
+            //OnPathFound();
+
+            var myLocation = _mapBuilder.SpaceToGrid(transform.position);
+            CurrentPath.DiscardUpTo(myLocation);
         }
 
         private void UpdateRotation(Vector3 targetPos)

@@ -106,7 +106,7 @@ namespace Assets.Scripts
                 waypoints.Remove(waypointsToRemove[i]);
             }
 
-            var finalPath = new Path();
+            var finalPath = new Path(waypoints[0], waypoints[waypoints.Count - 1]);
 
             foreach (var w in waypoints)
             {

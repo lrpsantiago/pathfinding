@@ -4,7 +4,7 @@
     {
         private readonly Grid _grid;
         private Location _position;
-        private Path _path;
+        private IPath _path;
 
         public Agent(Grid grid, uint x, uint y)
         {

@@ -1,51 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace PushingBoxStudios.Pathfinding
 {
-    public class Path : IPath
+    internal class Path : IPath
     {
-        private List<Location> m_waypoints;
+        private List<Location> _waypoints;
 
         public Location Front
         {
             get
             {
-                return m_waypoints[0];
+                return _waypoints[0];
             }
         }
+
+        public Location Start { get; private set; }
+
+        public Location Goal { get; private set; }
 
         public uint OriginalSize { get; private set; }
 
         public uint Size
         {
-            get { return (uint)m_waypoints.Count; }
+            get { return (uint)_waypoints.Count; }
         }
 
-        internal Path()
+        internal Path(Location start, Location goal)
         {
-            m_waypoints = new List<Location>();
+            _waypoints = new List<Location>();
+            Start = start;
+            Goal = goal;
         }
 
         public void PushBack(Location pos)
         {
-            m_waypoints.Add(pos);
-            this.OriginalSize = (uint)m_waypoints.Count;
+            _waypoints.Add(pos);
+            OriginalSize = (uint)_waypoints.Count;
         }
 
         public void PopFront()
         {
-            if (this.Size > 0)
+            if (Size > 0)
             {
-                m_waypoints.RemoveAt(0);
+                _waypoints.RemoveAt(0);
             }
         }
 
         public IPath Clone()
         {
-            Path clonePath = new Path();
-
-            Location[] waypoints = m_waypoints.ToArray();
+            var clonePath = new Path(Start, Goal);
+            var waypoints = _waypoints.ToArray();
 
             for (int i = 0; i < waypoints.Length; i++)
             {
@@ -57,21 +61,36 @@ namespace PushingBoxStudios.Pathfinding
 
         public IList<Location> ToList()
         {
-            return new List<Location>(m_waypoints.ToArray());
+            return new List<Location>(_waypoints.ToArray());
+        }
+
+        public void DiscardUpTo(Location location)
+        {
+            if(!_waypoints.Contains(location))
+            {
+                return;
+            }
+
+            while (Front != location)
+            {
+                PopFront();
+            }
+
+            PopFront();
         }
 
         //public void RemoveEdges()
         //{
-        //    List<Location> waypointsToRemove = new List<Location>();
+        //    var waypointsToRemove = new List<Location>();
 
-        //    for (int i = 1; i < m_waypoints.Count - 1; i++)
+        //    for (var i = 1; i < _waypoints.Count - 1; i++)
         //    {
-        //        Location hotspot = m_waypoints[i];
-        //        Location prev = m_waypoints[i - 1];
-        //        Location next = m_waypoints[i + 1];
-
-        //        Location prevDirection = new Location(prev.X - hotspot.X, prev.Y - hotspot.Y);
-        //        Location nextDirection = new Location(hotspot.X - next.X, hotspot.Y - next.Y);
+        //        var hotspot = _waypoints[i];
+        //        var prev = _waypoints[i - 1];
+        //        var next = _waypoints[i + 1];
+                
+        //        var prevDirection = new Location(prev.X - hotspot.X, prev.Y - hotspot.Y);
+        //        var nextDirection = new Location(hotspot.X - next.X, hotspot.Y - next.Y);
 
         //        if (prevDirection == nextDirection)
         //        {
@@ -79,9 +98,9 @@ namespace PushingBoxStudios.Pathfinding
         //        }
         //    }
 
-        //    for (int i = 0; i < waypointsToRemove.Count; i++)
+        //    for (var i = 0; i < waypointsToRemove.Count; i++)
         //    {
-        //        m_waypoints.Remove(waypointsToRemove[i]);
+        //        _waypoints.Remove(waypointsToRemove[i]);
         //    }
         //}
     }

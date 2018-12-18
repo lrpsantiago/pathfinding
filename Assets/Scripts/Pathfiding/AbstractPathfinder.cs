@@ -19,7 +19,7 @@ namespace PushingBoxStudios.Pathfinding
             ProbeMode = EProbeMode.EightDirections;
         }
 
-        public abstract Path FindPath(Grid grid, Location start, Location goal);
+        public abstract IPath FindPath(Grid grid, Location start, Location goal);
         //{
         //    return FindPath(grid, start.X, start.Y, goal.X, goal.Y);
         //}

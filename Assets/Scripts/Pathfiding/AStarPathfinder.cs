@@ -9,7 +9,7 @@ namespace PushingBoxStudios.Pathfinding
         private static readonly uint STRAIGHTCOST = 100;
         private static readonly uint DIAGONALCOST = 141;
 
-        public override Path FindPath(Grid grid, Location start, Location goal)
+        public override IPath FindPath(Grid grid, Location start, Location goal)
         {
             OnStarted();
 
@@ -19,7 +19,7 @@ namespace PushingBoxStudios.Pathfinding
 
             if (!ValidateGoal(grid, goal))
             {
-                var p = new Path();
+                var p = new Path(start, start);
                 p.PushBack(start);
                 OnPathNotFound();
 
@@ -128,14 +128,12 @@ namespace PushingBoxStudios.Pathfinding
                 aux = parents[aux.Value.X, aux.Value.Y];
             }
 
-            var path = new Path();
+            var path = new Path(start, goal);
 
             while (inverter.Count > 0)
             {
                 path.PushBack(inverter.Pop());
             }
-
-            path.PushBack(goal);
 
             OnPathFound();
             Statistics.StopTimer();
@@ -143,7 +141,6 @@ namespace PushingBoxStudios.Pathfinding
 
             return path;
         }
-
 
         private bool HasCornerBetween(Grid grid, Location from, Location to)
         {
